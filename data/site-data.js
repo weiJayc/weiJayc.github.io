@@ -5,13 +5,13 @@
  */
 window.SITE = {
   profile: {
-    name: { zh: "【待填：中文姓名】", en: "[TODO: English name]" },
+    name: { zh: "張惟喆", en: "WEICHE CHANG" },
     school: {
       zh: "輔仁大學 資訊工程學系",
       en: "Dept. of Computer Science & Information Engineering, Fu Jen Catholic University"
     },
     photo: "", // 例如 "assets/photo.jpg"；留空就顯示姓名縮寫
-    email: "", // 【待填】公開用的 Email
+    email: "weru6129@gmail.com", // 【待填】公開用的 Email
     github: "https://github.com/weiJayc",
     resumePdf: "", // 求職版用，例如 "assets/resume.pdf"
     taglineAcademic: {
