@@ -82,6 +82,9 @@ a:hover { text-decoration-color: currentColor; }
 .shot { aspect-ratio: 16 / 10; background: var(--wash); border-radius: 3px; overflow: hidden; }
 .shot img { width: 100%; height: 100%; object-fit: cover; }
 .shot-empty { display: grid; place-items: center; color: var(--faint); font-size: 13px; }
+.shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.shots figure { margin: 0; }
+.shots figcaption { margin-top: 8px; color: var(--grey); font-size: 13px; }
 .p-head { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; margin-top: 28px; }
 .p-head h3 { font-size: 24px; font-weight: 400; line-height: 1.4; }
 .p-year { color: var(--grey); font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -92,6 +95,7 @@ a:hover { text-decoration-color: currentColor; }
 .p-tech { color: var(--grey); }
 @media (max-width: 600px) {
   .project + .project { margin-top: 80px; }
+  .shots { grid-template-columns: 1fr; }
   .p-head h3 { font-size: 21px; }
   .facts { grid-template-columns: 1fr; gap: 0; }
   .facts dt { margin-top: 14px; }

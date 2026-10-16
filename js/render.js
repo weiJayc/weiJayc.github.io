@@ -22,6 +22,7 @@
     team: { zh: "團隊", en: "Team" },
     tech: { zh: "技術", en: "Stack" },
     highlights: { zh: "重點", en: "Highlights" },
+    demo: { zh: "網站", en: "Live site" },
     code: { zh: "原始碼", en: "Source" },
     resume: { zh: "履歷 PDF", en: "Résumé PDF" },
     certs: { zh: "證照", en: "Certs" },
@@ -59,6 +60,7 @@
     return '<p class="links">' + out.join("") + "</p>";
   }
   function row(label, html) { return html ? "<dt>" + esc(t(label)) + "</dt><dd>" + html + "</dd>" : ""; }
+  function ext(u) { return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u.replace(/^https:\/\//, "").replace(/\/$/, "")) + "</a>" : ""; }
   function list(items) { return items.length ? "<ul>" + items.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul>" : ""; }
 
   // ---------- 區塊 ----------
@@ -83,10 +85,18 @@
     return section("overview", UI.overview, '<dl class="facts">' + rows + "</dl>");
   }
 
-  function shot(p) {
-    return p.image
-      ? '<div class="shot"><img src="' + esc(asset(p.image)) + '" alt="' + esc(t(p.title)) + '" loading="lazy"></div>'
+  function frame(src, alt) {
+    return src
+      ? '<div class="shot"><img src="' + esc(asset(src)) + '" alt="' + esc(alt) + '" loading="lazy"></div>'
       : '<div class="shot shot-empty"><span>' + esc(t(UI.imgTodo)) + "</span></div>";
+  }
+
+  // images: [{ src, caption }] 會並排顯示多張；否則用單張 image
+  function shot(p) {
+    if (!p.images) return frame(p.image, t(p.title));
+    return '<div class="shots">' + p.images.map(function (im) {
+      return "<figure>" + frame(im.src, t(p.title) + " — " + t(im.caption)) + "<figcaption>" + esc(t(im.caption)) + "</figcaption></figure>";
+    }).join("") + "</div>";
   }
 
   function project(p) {
@@ -105,7 +115,8 @@
     rows += row(UI.role, list(arr(p.role))) +
       row(UI.team, esc(t(p.team))) +
       row(UI.tech, tech) +
-      row(UI.code, '<a href="' + esc(p.repo) + '" target="_blank" rel="noopener">' + esc(p.repo.replace(/^https:\/\//, "")) + "</a>");
+      row(UI.demo, ext(p.demo)) +
+      row(UI.code, ext(p.repo));
     return '<article class="project" id="p-' + esc(p.id) + '">' + shot(p) +
       '<div class="p-head"><h3>' + esc(t(p.title)) + "</h3>" + (t(p.period) ? '<span class="p-year">' + esc(t(p.period)) + "</span>" : "") + "</div>" +
       '<p class="p-context">' + esc(context) + "</p>" +

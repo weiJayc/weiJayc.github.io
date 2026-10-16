@@ -1,8 +1,3 @@
-/*
- * 網站唯一的資料來源：研究所版（/academic/）與求職版（/）都讀這一份。
- * 每個文字欄位都是 { zh: "...", en: "..." }。
- * 搜尋「待填」或「TODO」可以找到還需要你補上的地方。
- */
 window.SITE = {
   profile: {
     name: { zh: "張惟喆", en: "WEICHE CHANG" },
@@ -206,6 +201,51 @@ window.SITE = {
         highlights: {
           zh: ["參數化查詢防 SQL injection，並限制半徑與筆數", "Geocoding 批次腳本：指數退避重試、單一交易寫回", "LLM 輸出容錯解析，格式錯誤也不中斷 API"],
           en: ["Parameterized queries with radius and row limits", "Geocoding batch job with exponential backoff and single-transaction writes", "Fault-tolerant LLM output parsing keeps the API up"]
+        }
+      }
+    },
+    {
+      id: "games",
+      title: { zh: "Unity 小遊戲與下載網站", en: "Unity Mini-Games & Download Site" },
+      oneLiner: {
+        zh: "30 天自學 Unity 做出 Flappy Birds 與 CubeThon，再自己架網站讓同學下載試玩",
+        en: "Learned Unity in 30 days, built Flappy Birds and CubeThon, then made a site for classmates to download and play them"
+      },
+      context: { zh: "Web 基本原理與技術 課程", en: "Web Principles & Technologies course" },
+      period: "2024.10",
+      team: { zh: "個人", en: "Solo" },
+      badge: { zh: "iThome 鐵人賽完賽", en: "iThome Ironman Challenge finisher" },
+      tech: ["Unity", "HTML / CSS", "jQuery", "GitHub Pages"],
+      repo: "https://github.com/weiJayc/My-games-download-page",
+      demo: "https://weijayc.github.io/My-games-download-page/",
+      // 兩款遊戲各一張，例如 src: "assets/projects/games-flappy.png"
+      images: [
+        { src: "", caption: "Flappy Birds" },
+        { src: "", caption: { zh: "CubeThon（方塊馬拉松）", en: "CubeThon" } }
+      ],
+      role: {
+        zh: ["以 Unity 製作 Flappy Birds（最高分存在本機）與 CubeThon（三個關卡）", "設計並撰寫遊戲介紹與下載網站", "以 jQuery 做下載按鈕與導覽列的滑動遮罩效果"],
+        en: ["Built Flappy Birds (locally saved high score) and CubeThon (three levels) in Unity", "Designed and wrote the showcase & download site", "Added slide-in hover overlays to buttons and nav with jQuery"]
+      },
+      academic: {
+        motivation: {
+          zh: "課程要求參加 iThome 鐵人賽，我用 30 天從零學 Unity 做出兩款遊戲。為了讓互評的同學能直接下載試玩，我自己做了這個網站，也是我第一個有實際用途的網站。",
+          en: "The course required the iThome Ironman 30-day challenge, during which I learned Unity from scratch and built two games. To let peer reviewers download and play them, I built this site — my first website with a real purpose."
+        },
+        method: {
+          zh: "每款遊戲一個區塊：全螢幕背景、標題與 Windows 版下載按鈕，下方接操作說明截圖與遊玩影片；固定導覽列可直接跳到各遊戲，部署在 GitHub Pages。",
+          en: "One section per game: a full-screen hero with title and Windows download button, followed by annotated screenshots and a gameplay video. A fixed nav jumps between games; hosted on GitHub Pages."
+        },
+        challenge: { zh: "【待填：遇到的困難與解法】", en: "[TODO: key challenge and how it was solved]" }
+      },
+      job: {
+        summary: {
+          zh: "從遊戲開發到網站上線一人完成：自學 Unity 做出兩款遊戲，並建置下載網站讓同學試玩。",
+          en: "Solo from game to launch: taught myself Unity, shipped two games, and built a download site for classmates to try them."
+        },
+        highlights: {
+          zh: ["完成 iThome 鐵人賽，30 天內從零學會 Unity", "兩款可下載遊玩的 Windows 遊戲", "第一個正式上線的網站，部署於 GitHub Pages"],
+          en: ["Completed the iThome Ironman challenge, learning Unity from scratch in 30 days", "Two playable Windows games available for download", "First production website, deployed on GitHub Pages"]
         }
       }
     }
