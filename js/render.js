@@ -28,6 +28,12 @@
     certs: { zh: "證照", en: "Certs" },
     imgTodo: { zh: "專題圖片", en: "Project image" },
     contactAcademic: { zh: "歡迎來信討論研究或專題細節。", en: "Happy to talk about research or any project in detail." },
+    coursework: { zh: "課程實驗", en: "Coursework" },
+    question: { zh: "問題", en: "Question" },
+    approach: { zh: "做法", en: "Approach" },
+    finding: { zh: "發現", en: "Findings" },
+    report: { zh: "報告", en: "Report" },
+    moreCourses: { zh: "其他修課實作", en: "Other coursework" },
     contactJob: { zh: "歡迎來信聯繫。", en: "Feel free to get in touch." }
   };
 
@@ -130,6 +136,35 @@
     }).join(""));
   }
 
+  function coursework() {
+    var C = S.coursework;
+    if (!C || !C.items) return "";
+    var cards = C.items.map(function (c) {
+      var nums = (c.numbers || []).map(function (n) {
+        return '<div><span class="v">' + esc(t(n.value)) + '</span><span class="l">' + esc(t(n.label)) + "</span></div>";
+      }).join("");
+      var report = c.report
+        ? '<a href="' + esc(asset(c.report)) + '" target="_blank" rel="noopener">PDF</a>'
+        : "";
+      return '<article class="course" id="c-' + esc(c.id) + '">' +
+        '<div class="p-head"><h3>' + esc(t(c.title)) + "</h3>" +
+        (t(c.period) ? '<span class="p-year">' + esc(t(c.period)) + "</span>" : "") + "</div>" +
+        '<p class="p-context">' + esc(t(c.course)) + "</p>" +
+        (nums ? '<div class="nums">' + nums + "</div>" : "") +
+        '<dl class="facts">' +
+          row(UI.question, x(c.question)) +
+          row(UI.approach, x(c.approach)) +
+          row(UI.finding, x(c.finding)) +
+          row(UI.report, report) +
+        "</dl></article>";
+    }).join("");
+    var more = C.more && C.more.length
+      ? '<div class="course-more"><h3>' + esc(t(UI.moreCourses)) + "</h3>" + list(C.more.map(t)) + "</div>"
+      : "";
+    return section("coursework", UI.coursework,
+      '<p class="course-intro">' + esc(t(C.intro)) + "</p>" + cards + more);
+  }
+
   function awards() {
     var groups = [], idx = {};
     S.awards.filter(function (a) { return a.pages.indexOf(page) !== -1; }).forEach(function (a) {
@@ -155,7 +190,7 @@
 
   function topbar() {
     var nav = page === "academic"
-      ? [["projects", UI.projects], ["research", UI.research], ["awards", UI.awardsNav], ["contact", UI.contact]]
+      ? [["projects", UI.projects], ["research", UI.research], ["coursework", UI.coursework], ["awards", UI.awardsNav], ["contact", UI.contact]]
       : [["skills", UI.skills], ["projects", UI.projects], ["awards", UI.awardsNav], ["contact", UI.contact]];
     return '<div class="topbar"><nav aria-label="Sections">' +
       nav.map(function (n) { return '<a href="#' + n[0] + '">' + esc(t(n[1])) + "</a>"; }).join("") + "</nav>" +
@@ -170,7 +205,7 @@
     document.title = isTodo(name) ? suffix : name + "｜" + suffix;
 
     var body = page === "academic"
-      ? hero() + overview() + section("projects", UI.projects, S.projects.map(project).join("")) + research() + awards() + contact()
+      ? hero() + overview() + section("projects", UI.projects, S.projects.map(project).join("")) + research() + coursework() + awards() + contact()
       : hero() + skills() + section("projects", UI.projects, S.projects.map(project).join("")) + awards() + contact();
 
     document.getElementById("app").innerHTML =

@@ -268,8 +268,105 @@ window.SITE = {
         zh: "以 SIC 可解性為依據，進行自適應的使用者分組與功率分配。",
         en: "SIC-decodability-driven adaptive user grouping and power allocation."
       }
+    },
+    {
+      title: { zh: "論文研讀：智慧通訊系統設計（課程）", en: "Paper Reading: Intelligent Communication System Design (course)" },
+      period: "",
+      body: {
+        zh: "課程以研讀近年通訊論文為主（共 18 篇，2020–2026），主題包含近場 beam focusing、ISAC、無線電力傳輸，以及 LiFi 的 MIMO-OFDM、同步與以深度學習做定位。其中 LiFi 相關論文與我的可見光通訊研究方向直接相關。",
+        en: "A reading-based course covering 18 recent communication papers (2020–2026): near-field beam focusing, ISAC, wireless power transfer, and LiFi topics including MIMO-OFDM, synchronization and deep-learning-based positioning. The LiFi papers relate directly to my visible light communication research direction."
+      }
     }
   ],
+
+  // 研究所版：課程實驗（只在 academic 頁顯示）
+  coursework: {
+    intro: {
+      zh: "以下是修課作業中，我自己實作演算法、設計比較實驗並分析數據的報告。",
+      en: "Coursework where I implemented the algorithms myself, designed comparison experiments and analyzed the data."
+    },
+    items: [
+      {
+        id: "3sat",
+        course: { zh: "人工智慧導論 作業一", en: "Intro to AI — Assignment 1" },
+        period: "2025",
+        title: { zh: "3-SAT：比較 DFS、BFS 與 A* 搜尋", en: "3-SAT: Comparing DFS, BFS and A* Search" },
+        numbers: [
+          { value: "28,701", label: { zh: "A* 展開節點數（D = 50）", en: "Nodes expanded by A* (D = 50)" } },
+          { value: "47,302", label: { zh: "DFS 展開節點數（D = 50）", en: "Nodes expanded by DFS (D = 50)" } }
+        ],
+        question: {
+          zh: "同一個 3-SAT 問題，不同搜尋策略的代價差在哪裡？",
+          en: "On the same 3-SAT problem, where do different search strategies actually differ in cost?"
+        },
+        approach: {
+          zh: "用 C++ 實作 DFS、BFS 與 A*，在維度 D = 10～50 的測資上記錄展開節點數、記憶體用量與執行時間。另外做對照實驗：拿掉 DFS 的變數取值排序函式，觀察它對結果的影響。",
+          en: "Implemented DFS, BFS and A* in C++ and measured nodes expanded, memory usage and runtime for D = 10–50. As a control experiment, I removed DFS's value-ordering function to measure its effect."
+        },
+        finding: {
+          zh: "D = 50 時，A* 展開的節點數最少。拿掉取值排序後，DFS 展開 125,000 個節點仍沒有找到解，可見這個排序是 DFS 能跑完的關鍵。我也記錄了一個還沒完全解釋的現象：A* 的記憶體用量反而比 BFS 高。",
+          en: "At D = 50, A* expanded the fewest nodes. Without value ordering, DFS expanded 125,000 nodes and still found no solution, showing the ordering is what makes DFS finish. I also noted an open question: A* used more memory than BFS."
+        },
+        report: "assets/coursework/ai-3sat.pdf"
+      },
+      {
+        id: "tsp",
+        course: { zh: "人工智慧導論 作業二", en: "Intro to AI — Assignment 2" },
+        period: "2025",
+        title: { zh: "TSP：三種區域搜尋法與改良版本", en: "TSP: Three Local Search Methods and Improved Variants" },
+        numbers: [
+          { value: "17×", label: { zh: "GA+ 相對 GA 的路徑長改善（1000 個城市）", en: "Tour-length improvement of GA+ over GA (1000 cities)" } },
+          { value: "≈ 1%", label: { zh: "GA+ 標準差／平均（500–1000 個城市）", en: "GA+ std / mean (500–1000 cities)" } }
+        ],
+        question: {
+          zh: "Hill Climbing、Simulated Annealing、Genetic Algorithm 各自卡在哪裡？改良後能好多少？",
+          en: "Where do Hill Climbing, Simulated Annealing and Genetic Algorithms each get stuck, and how much can improvements help?"
+        },
+        approach: {
+          zh: "用 C++ 實作三種演算法的一般版與改良版，共 6 種：HC+ 多次重啟、SA+ 以 greedy 產生起始路徑、GA+ 加入 25% greedy 初始族群與菁英保留。城市數 50～1000，每組跑 10 次，比較平均路徑長、執行時間與標準差，並對 GA+ 做參數敏感度分析（tournament k、mutation rate、population size）。",
+          en: "Implemented plain and improved versions of all three in C++ (6 variants): HC+ with restarts, SA+ with a greedy initial tour, and GA+ with a 25% greedy initial population plus elitism. Ran 50–1000 cities, 10 runs each, comparing mean tour length, runtime and standard deviation, plus a parameter-sensitivity study on GA+ (tournament k, mutation rate, population size)."
+        },
+        finding: {
+          zh: "起始解的品質幾乎主導結果：1000 個城市時，GA 的平均路徑長從 1,065,507 降到 61,463。mutation rate 0.1 時平均與標準差都最低，0.4 時標準差升到約 2.6 倍。k = 30 雖然平均最好，但標準差也最大，我判斷是運氣成分，因此選 k = 8～10 作為平衡點。",
+          en: "Initial-solution quality dominated the outcome: at 1000 cities, GA's mean tour length dropped from 1,065,507 to 61,463. A mutation rate of 0.1 gave both the lowest mean and lowest std; at 0.4 the std rose about 2.6×. k = 30 had the best mean but also the highest std, which I judged to be luck, so I chose k = 8–10 as the balance point."
+        },
+        report: "assets/coursework/ai-tsp.pdf"
+      },
+      {
+        id: "mnist",
+        course: { zh: "人工智慧導論 作業三", en: "Intro to AI — Assignment 3" },
+        period: "2025",
+        title: { zh: "手寫數字辨識：KNN、決策樹與線性分類器", en: "Handwritten Digit Recognition: KNN, Decision Tree and Linear Classifier" },
+        numbers: [
+          { value: "88.32%", label: { zh: "線性分類器測試準確率", en: "Linear classifier test accuracy" } },
+          { value: "7 ms", label: { zh: "決策樹預測 10,000 張", en: "Decision tree, 10,000 predictions" } }
+        ],
+        question: {
+          zh: "準確率、訓練時間與預測速度之間，三種經典分類器各自怎麼取捨？",
+          en: "How do three classic classifiers trade off accuracy, training time and prediction speed?"
+        },
+        approach: {
+          zh: "用 C++ 實作三種分類器，以 MNIST 比較準確率、macro F1、訓練與預測時間。KNN 改成只儲存 10 個類別的平均向量；決策樹以 Gini impurity 選切點，並每 4 個 pixel 取樣一次，把特徵從 28×28 降到 7×7。",
+          en: "Implemented three classifiers in C++ and compared accuracy, macro F1, training and prediction time on MNIST. KNN was reduced to 10 class-mean vectors; the decision tree splits on Gini impurity, with features downsampled from 28×28 to 7×7 by sampling every 4th pixel."
+        },
+        finding: {
+          zh: "線性分類器準確率最高（88.32%），但訓練約需 23.5 分鐘。決策樹準確率 82.96%，預測 10,000 張只要 7 ms。KNN 訓練最快，但準確率最低（82.03%）。結論是準確率和速度一定要在訓練或預測時間上取捨，我認為決策樹最平衡。同一門課的期末專題見上方「AI 手寫計算機」。",
+          en: "The linear classifier was most accurate (88.32%) but took about 23.5 minutes to train. The decision tree reached 82.96% and predicted 10,000 images in 7 ms. KNN trained fastest but was least accurate (82.03%). Accuracy and speed must be paid for in training or prediction time; I found the decision tree the best balance. The course's final project is the AI Handwriting Calculator above."
+        },
+        report: "assets/coursework/ai-mnist.pdf"
+      }
+    ],
+    more: [
+      {
+        zh: "演算法｜N-Queens 回溯法：n = 4～16 全部求解並記錄拜訪與可行節點數；n = 16 時共 14,772,512 組解，拜訪約 180 億個節點。",
+        en: "Algorithms | N-Queens backtracking: solved n = 4–16, logging visited and promising nodes; n = 16 has 14,772,512 solutions and about 18 billion visited nodes."
+      },
+      {
+        zh: "物聯網概論 期末專題（4 人）：在玩具車上整合超音波、加速度感測器、LED 螢幕、蜂鳴器與 LED，做出倒車雷達、前方 LED 大燈與時速顯示。",
+        en: "Intro to IoT final project (team of 4): integrated ultrasonic and accelerometer sensors, an LED display, a buzzer and LEDs on a toy car for a reversing radar, front LED headlights and a speed display."
+      }
+    ]
+  },
 
   // 競賽、證照與獎學（新到舊）
   awards: [

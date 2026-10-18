@@ -24,6 +24,7 @@ assets/             ← 大頭照、專題 GIF、履歷 PDF
 - 圖片放進 `assets/`，再把路徑填進 `image` / `photo` / `resumePdf`，例如 `"assets/projects/mmwave.gif"`。
 - 專題想放多張並排圖片時，改用 `images: [{ src, caption }]`（取代 `image`）。
 - 專題有線上網址時填 `demo`，會多出「網站」一列。
+- `coursework` 只出現在研究所版：`items` 是課程實驗卡片（問題 / 做法 / 發現 / 報告 PDF），`more` 是一行一項的其他修課實作。報告 PDF 放在 `assets/coursework/`。
 
 本機預覽：直接用瀏覽器打開 `index.html` 或 `academic/index.html` 即可。
 

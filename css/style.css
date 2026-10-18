@@ -107,6 +107,19 @@ a:hover { text-decoration-color: currentColor; }
 .research h3 { font-size: 18px; font-weight: 500; line-height: 1.5; }
 .research p { color: var(--grey); margin-top: 6px; max-width: var(--measure); }
 
+/* 課程實驗 */
+.course-intro { color: var(--grey); max-width: var(--measure); margin-bottom: 8px; }
+.course + .course { margin-top: 88px; }
+.course .p-head { margin-top: 28px; }
+.course .facts { margin-top: 24px; font-size: 15px; }
+.nums { display: flex; flex-wrap: wrap; gap: 16px 48px; margin-top: 20px; }
+.nums div { display: flex; flex-direction: column; max-width: 16em; }
+.nums .v { font-size: 22px; font-weight: 300; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.nums .l { color: var(--grey); font-size: 13px; line-height: 1.5; }
+.course-more { margin-top: 88px; max-width: var(--measure); }
+.course-more h3 { font-size: 15px; font-weight: 500; color: var(--grey); margin-bottom: 8px; }
+.course-more li + li { margin-top: 8px; }
+
 /* ===== Awards (grouped by year) ===== */
 .years { max-width: 44em; }
 .year-row { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 0 24px; padding: 14px 0; }
