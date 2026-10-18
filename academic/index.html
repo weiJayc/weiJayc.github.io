@@ -7,7 +7,13 @@
   <meta name="description" content="研究所申請用作品集：專題、研究經驗與競賽 — Academic portfolio for graduate admissions.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
-  <script>window.goatcounter = { path: function () { return location.pathname || "/"; } };</script>
+  <script>
+    // 直接打開某個項目（例如 /academic/#mmwave）時，把 #項目 一起記進路徑
+    window.goatcounter = { path: function () {
+      var detail = document.body && document.body.getAttribute("data-view") === "detail";
+      return (location.pathname || "/") + (detail ? location.hash : "");
+    } };
+  </script>
   <script data-goatcounter="https://jaychang.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </head>

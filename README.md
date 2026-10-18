@@ -25,6 +25,10 @@ assets/             ← 大頭照、專題 GIF、履歷 PDF
 - 專題想放多張並排圖片時，改用 `images: [{ src, caption }]`（取代 `image`）。
 - 專題有線上網址時填 `demo`，會多出「網站」一列。
 - `coursework` 只出現在研究所版：`items` 是課程實驗卡片（問題 / 做法 / 發現 / 報告 PDF），`more` 是一行一項的其他修課實作。報告 PDF 放在 `assets/coursework/`。
+- 研究所版首頁是卡片目錄，點卡片會打開該項目的詳細頁，網址是 `academic/#項目id`（例如 `#mmwave`、`#tsp`），可以直接貼進備審或信裡。
+- 專題的 `key: { value, label }` 是卡片上的大數字；沒填就改顯示技術。
+- `fresh: true` 會在卡片上標「備審未收錄」，專題、研究、課程實驗都可以用。
+- 研究項目目前直接把整段文字顯示在卡片上，沒有詳細頁。
 
 本機預覽：直接用瀏覽器打開 `index.html` 或 `academic/index.html` 即可。
 

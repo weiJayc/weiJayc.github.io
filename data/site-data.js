@@ -86,6 +86,7 @@ window.SITE = {
       period: "2025.12 – 2026.03",
       team: { zh: "3 人", en: "Team of 3" },
       badge: { zh: "第三名", en: "3rd Place" },
+      key: { value: { zh: "第三名", en: "3rd Place" }, label: { zh: "2026 全國競賽", en: "2026 national contest" } },
       tech: ["Python", "PyTorch (3D CNN)", "PySide2", "pySerial", { zh: "60 GHz FMCW 雷達", en: "60 GHz FMCW radar" }, "Arduino"],
       repo: "https://github.com/weiJayc/mmWave-ai-Contest",
       image: "",
@@ -129,6 +130,7 @@ window.SITE = {
       period: "",
       team: "",
       badge: null,
+      key: { value: "98.9%", label: { zh: "單一符號驗證準確率", en: "Single-symbol validation accuracy" } },
       tech: ["Python", "TensorFlow / Keras", "OpenCV", "Tkinter"],
       repo: "https://github.com/delitoast1/ai-final-project",
       image: "",
@@ -172,6 +174,7 @@ window.SITE = {
       period: "2025.12",
       team: { zh: "4 人", en: "Team of 4" },
       badge: null,
+      key: { value: "24,024", label: { zh: "筆政府開放資料清理與正規化", en: "Open-data records cleaned and normalized" } },
       tech: ["PostgreSQL", "PostGIS", "Node.js (Express)", "Ollama (Llama 3.1)", "React"],
       repo: "https://github.com/weiJayc/medical-clinic-recommendation",
       image: "",
@@ -215,6 +218,8 @@ window.SITE = {
       period: "2024.10",
       team: { zh: "個人", en: "Solo" },
       badge: { zh: "iThome 鐵人賽完賽", en: "iThome Ironman Challenge finisher" },
+      key: { value: { zh: "30 天", en: "30 days" }, label: { zh: "從零自學 Unity，鐵人賽完賽", en: "Learned Unity from scratch; Ironman finisher" } },
+      fresh: true, // 備審未收錄
       tech: ["Unity", "HTML / CSS", "jQuery", "GitHub Pages"],
       repo: "https://github.com/weiJayc/My-games-download-page",
       demo: "https://weijayc.github.io/My-games-download-page/",
@@ -272,6 +277,7 @@ window.SITE = {
     {
       title: { zh: "論文研讀：智慧通訊系統設計（課程）", en: "Paper Reading: Intelligent Communication System Design (course)" },
       period: "",
+      fresh: true,
       body: {
         zh: "課程以研讀近年通訊論文為主（共 18 篇，2020–2026），主題包含近場 beam focusing、ISAC、無線電力傳輸，以及 LiFi 的 MIMO-OFDM、同步與以深度學習做定位。其中 LiFi 相關論文與我的可見光通訊研究方向直接相關。",
         en: "A reading-based course covering 18 recent communication papers (2020–2026): near-field beam focusing, ISAC, wireless power transfer, and LiFi topics including MIMO-OFDM, synchronization and deep-learning-based positioning. The LiFi papers relate directly to my visible light communication research direction."
@@ -288,6 +294,7 @@ window.SITE = {
     items: [
       {
         id: "3sat",
+        fresh: true,
         course: { zh: "人工智慧導論 作業一", en: "Intro to AI — Assignment 1" },
         period: "2025",
         title: { zh: "3-SAT：比較 DFS、BFS 與 A* 搜尋", en: "3-SAT: Comparing DFS, BFS and A* Search" },
@@ -311,6 +318,7 @@ window.SITE = {
       },
       {
         id: "tsp",
+        fresh: true,
         course: { zh: "人工智慧導論 作業二", en: "Intro to AI — Assignment 2" },
         period: "2025",
         title: { zh: "TSP：三種區域搜尋法與改良版本", en: "TSP: Three Local Search Methods and Improved Variants" },
@@ -334,6 +342,7 @@ window.SITE = {
       },
       {
         id: "mnist",
+        fresh: true,
         course: { zh: "人工智慧導論 作業三", en: "Intro to AI — Assignment 3" },
         period: "2025",
         title: { zh: "手寫數字辨識：KNN、決策樹與線性分類器", en: "Handwritten Digit Recognition: KNN, Decision Tree and Linear Classifier" },
