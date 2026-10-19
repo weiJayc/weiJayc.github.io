@@ -35,7 +35,7 @@ data/assets/        ← 專題圖片與影片（projects/）、課程報告 PDF�
 - 研究所版首頁是卡片目錄，點卡片會打開該項目的詳細頁，網址是 `academic/#項目id`（例如 `#mmwave`、`#tsp`），可以直接貼進備審或信裡。
 - 專題的 `key: { value, label }` 是卡片上的大數字；沒填就改顯示技術。
 - `fresh: true` 會在卡片上標「備審未收錄」，專題、研究、課程實驗都可以用。
-- 研究項目目前直接把整段文字顯示在卡片上，沒有詳細頁。
+- 研究項目加上 `id` 就會變成可點的卡片，有自己的詳細頁（`#id`），欄位和專題相同：`context`、`body`（卡片摘要）、`key`、`image`、`media`、`tech`，以及 `academic: { motivation, method, result }`；`notes: [{ url, label }]` 會列在「筆記」。沒有 `id` 的研究項目維持整段文字顯示在卡片上。
 
 本機預覽：直接用瀏覽器打開 `index.html` 或 `academic/index.html` 即可。
 

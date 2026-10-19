@@ -34,6 +34,8 @@
     report: { zh: "報告 PDF", en: "Report (PDF)" },
     reportsN: { zh: "{n} 份報告 PDF", en: "{n} PDF reports" },
     blog: { zh: "鐵人賽文章", en: "Ironman posts" },
+    result: { zh: "結果", en: "Results" },
+    notes: { zh: "筆記", en: "Notes" },
     tutorial: { zh: "參考教學", en: "Tutorial" },
     moreCourses: { zh: "其他修課實作", en: "Other coursework" },
     details: { zh: "完整介紹", en: "Full write-up" },
@@ -156,6 +158,7 @@
   function items() {
     var cw = S.coursework ? S.coursework.items : [];
     return S.projects.map(function (p) { return { kind: "project", d: p }; })
+      .concat(S.research.filter(function (r) { return r.id; }).map(function (r) { return { kind: "research", d: r }; }))
       .concat(cw.map(function (c) { return { kind: "course", d: c }; }));
   }
   // 回傳 { kind, d, part }；part 是卡片裡某份作業的 id（例如 #tsp 會打開整張卡片並捲到那份作業）
@@ -169,7 +172,7 @@
     return null;
   }
   function current() { return find(decodeURIComponent(window.location.hash.slice(1))); }
-  function home(it) { return it.kind === "project" ? "projects" : "coursework"; }
+  function home(it) { return { project: "projects", research: "research", course: "coursework" }[it.kind]; }
   function tag(d) { return d.fresh ? '<span class="tag">' + esc(t(UI.fresh)) + "</span>" : ""; }
   function keyFig(k) {
     return '<p class="c-key"><span class="v">' + esc(t(k.value)) + '</span><span class="l">' + esc(t(k.label)) + "</span></p>";
@@ -202,25 +205,29 @@
       }).join("") + "</div>";
   }
 
+  // kind：project（專題）、research（有詳細頁的研究）、course（課程實驗）
   function card(it) {
-    var d = it.d, isP = it.kind === "project", parts = d.parts || [];
-    var key = isP ? d.key : (d.numbers || [])[0];
+    var d = it.d, kind = it.kind, isCourse = kind === "course", parts = d.parts || [];
+    var key = isCourse ? (d.numbers || [])[0] : d.key;
     var reports = parts.filter(function (p) { return p.report; }).length;
-    var hints = isP ? [UI.details, d.demo && UI.demo, d.repo && UI.code]
+    var hints = kind === "project" ? [UI.details, d.demo && UI.demo, d.repo && UI.code]
+      : kind === "research" ? [UI.details, (d.notes || []).length && UI.notes, d.repo && UI.code]
       : [UI.data, parts.length ? reports && t(UI.reportsN).replace("{n}", reports) : d.report && UI.report];
+    var summary = { project: d.oneLiner, research: d.body, course: d.summary || d.question }[kind];
     // 包含多份作業的卡片列出各份作業，不放大數字
     var detailHtml = parts.length
       ? '<ul class="c-parts">' + parts.map(function (p) { return "<li><span>" + esc(t(p.label)) + "</span>" + esc(t(p.title)) + "</li>"; }).join("") + "</ul>"
-      : key ? keyFig(key) : isP ? '<p class="c-key"><span class="l">' + techText(d) + "</span></p>" : "";
-    return '<a class="card' + (parts.length ? " card-wide" : "") + '" href="#' + esc(d.id) + '">' + (isP ? cover(d) : "") + '<div class="c-body">' +
-      '<p class="c-top"><span>' + esc(t(isP ? d.context : d.course)) + "</span>" + tag(d) + "</p>" +
+      : key ? keyFig(key) : d.tech ? '<p class="c-key"><span class="l">' + techText(d) + "</span></p>" : "";
+    return '<a class="card' + (parts.length ? " card-wide" : "") + '" href="#' + esc(d.id) + '">' + (isCourse ? "" : cover(d)) + '<div class="c-body">' +
+      '<p class="c-top"><span>' + esc(t(isCourse ? d.course : d.context)) + "</span>" + tag(d) + "</p>" +
       "<h3>" + esc(t(d.title)) + "</h3>" +
-      '<p class="c-sum">' + esc(t(isP ? d.oneLiner : d.summary || d.question)) + "</p>" + detailHtml +
+      '<p class="c-sum">' + esc(t(summary)) + "</p>" + detailHtml +
       '<p class="c-foot"><span>' + hints.filter(Boolean).map(t).map(esc).join(" · ") + '</span><span class="arrow" aria-hidden="true">→</span></p></div></a>';
   }
 
-  // 研究項目目前內容不多，整段直接顯示在卡片上，不做詳細頁
+  // 沒有 id 的研究項目內容不多，整段直接顯示在卡片上，不做詳細頁
   function researchCard(r) {
+    if (r.id) return card({ kind: "research", d: r });
     var top = (t(r.period) || r.fresh) ? '<p class="c-top"><span>' + esc(t(r.period)) + "</span>" + tag(r) + "</p>" : "";
     return '<article class="card card-static"><div class="c-body">' + top + "<h3>" + esc(t(r.title)) + "</h3>" +
       '<p class="c-sum">' + x(r.body) + "</p></div></article>";
@@ -298,6 +305,9 @@
   function labeled(o) {
     return o ? '<a href="' + esc(o.url) + '" target="_blank" rel="noopener">' + esc(t(o.label)) + "</a>" : "";
   }
+  function linkList(os) {
+    return (os || []).length ? "<ul>" + os.map(function (o) { return "<li>" + labeled(o) + "</li>"; }).join("") + "</ul>" : "";
+  }
   // 卡片裡的一份作業：問題、做法、發現，右側放數字與報告
   function coursePart(p) {
     return '<section class="d-part" id="part-' + esc(p.id) + '">' +
@@ -310,15 +320,16 @@
   function detail(it) {
     var d = it.d, all = items(), i = all.map(function (a) { return a.d.id; }).indexOf(d.id);
     var context, meta, lede, body;
-    if (it.kind === "project") {
+    if (it.kind === "project" || it.kind === "research") {
+      var A = d.academic || {};
       context = t(d.context) + (d.badge ? comma() + t(d.badge) : "");
       meta = [t(d.period), t(d.team)];
-      lede = t(d.oneLiner);
+      lede = t(d.oneLiner || d.body);
       body = dBody(
-        block(UI.motivation, d.academic.motivation) + block(UI.method, d.academic.method) + block(UI.challenge, d.academic.challenge),
+        block(UI.motivation, A.motivation) + block(UI.method, A.method) + block(UI.result, A.result) + block(UI.challenge, A.challenge),
         heroMedia(d),
-        '<dl class="facts">' + row(UI.role, list(arr(d.role))) +
-          row(UI.tech, '<span class="p-tech">' + techText(d) + "</span>") +
+        '<dl class="facts">' + row(UI.role, list(arr(d.role))) + row(UI.notes, linkList(d.notes)) +
+          row(UI.tech, d.tech ? '<span class="p-tech">' + techText(d) + "</span>" : "") +
           row(UI.demo, ext(d.demo)) + row(UI.blog, labeled(d.blog)) + row(UI.tutorial, labeled(d.tutorial)) +
           row(UI.code, ext(d.repo)) + "</dl>") + gallery(d);
     } else if (d.parts) {

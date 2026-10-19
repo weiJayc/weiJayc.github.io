@@ -412,12 +412,46 @@ window.SITE = {
 
   // 研究所版：研究經驗與研究計畫
   research: [
+    // 有 id 的研究項目會變成可點的卡片，並有自己的詳細頁（欄位同專題）
     {
-      title: { zh: "LiFi 光通訊模擬", en: "LiFi Optical Link Simulation" },
+      id: "lifi",
+      title: { zh: "LiFi 光通訊模擬：NOMA 與 SIC", en: "LiFi Simulation: NOMA with SIC" },
+      context: { zh: "進行中的研究", en: "Ongoing research" },
       period: "", // 【待填】
       body: {
-        zh: "以 Matlab 建立光傳輸與光偵測器（PD）接收的模擬並驗證可行。做法是先釐清所有相關名詞，把原理與流程整理成清楚的文件，再設計實驗。",
-        en: "Built and verified a Matlab simulation of optical transmission and photodiode (PD) reception. My approach: clarify every related term first, write a clear document of the principles and flow, then design experiments."
+        zh: "用 MATLAB 建立 4 盞 LED、1 個接收器的可見光通訊模擬，依序完成通道計算、功率分配、疊加傳輸與 SIC 解碼，並比較不同功率分配下的 BER。",
+        en: "A MATLAB simulation of visible light communication with four LEDs and one receiver, covering the channel, power allocation, superposed transmission and SIC decoding, and comparing BER under different power allocations."
+      },
+      key: { value: "0.0077", label: { zh: "30 dB 時固定功率分配的整體 BER（平均分配約 0.37）", en: "Overall BER at 30 dB with fixed power allocation (≈ 0.37 with uniform)" } },
+      tech: ["MATLAB"],
+      image: "data/assets/research/research_environment.png",
+      notes: [
+        { url: "https://hackmd.io/uReNJKYCQDaCHgA-3yuC_g", label: { zh: "LiFi Basic Knowledge：傳輸流程九步驟", en: "LiFi Basic Knowledge: the nine-step transmission chain (in Chinese)" } },
+        { url: "https://hackmd.io/GxMzCZaQSi62NSOGKfi6pg?view", label: { zh: "GRPA 與 NGDPA：VLC NOMA 的功率分配", en: "GRPA & NGDPA: power allocation for VLC NOMA (in Chinese)" } }
+      ],
+      media: [
+        {
+          src: "data/assets/research/research_overall_BER_curves.png", wide: true,
+          caption: { zh: "整體 BER：固定功率分配與平均分配的比較。", en: "Overall BER: fixed vs. uniform power allocation." }
+        },
+        {
+          src: "data/assets/research/research_per-led_BER_curves.png", wide: true,
+          caption: { zh: "4 盞 LED 各自的 BER。", en: "BER for each of the four LEDs." }
+        }
+      ],
+      academic: {
+        motivation: {
+          zh: "LiFi 的傳輸牽涉通道模型、調變、多工、功率分配與 SIC 等許多環節。我先把整個傳輸流程拆成九個步驟整理成筆記，釐清每個名詞與公式，也讓指導老師能清楚看到流程的全貌，以及我們正在處理的是哪個部分。接著搭建 MATLAB 模擬環境，初步驗證整條傳輸流程能否跑通。",
+          en: "LiFi transmission involves many pieces: the channel model, modulation, multiple access, power allocation and SIC. I first broke the whole transmission chain into nine steps and wrote them up as notes, pinning down every term and formula, so that my advisor could also see the full picture and which part we were working on. I then set up a MATLAB simulation environment to check that the whole chain works end to end."
+        },
+        method: {
+          zh: "在 5 × 5 × 3 公尺的房間裡，天花板裝 4 盞 LED，接收器放在地面中央。先計算每盞 LED 到接收器的 LOS 通道增益（含接收視角限制），再以固定比例 0.75、0.18、0.05、0.02 分配 4 盞 LED 的功率。每盞 LED 傳送隨機位元的 BPSK 訊號，在接收端疊加並加上 AWGN，最後用 SIC 由強到弱依序解碼。SNR 從 0 到 30 dB，每個 SNR 跑 25 次、每次 1,000 個位元，並和平均分配功率的結果比較。",
+          en: "In a 5 × 5 × 3 m room, four LEDs sit on the ceiling and the receiver lies at the center of the floor. The simulation computes the LOS channel gain from each LED to the receiver, including the receiver's field of view, then splits power among the four LEDs in fixed ratios of 0.75, 0.18, 0.05 and 0.02. Each LED sends BPSK symbols from random bits; the signals superpose at the receiver with AWGN added, and SIC decodes them from strongest to weakest. SNR is swept from 0 to 30 dB with 25 runs of 1,000 bits each and compared against uniform power allocation."
+        },
+        result: {
+          zh: "平均分配時 4 層訊號的振幅相同，SIC 無法把它們分開，整體 BER 在所有 SNR 下都停在約 0.37。固定分配的整體 BER 則隨 SNR 下降，30 dB 時降到 0.0077。各盞 LED 之間的差異也很明顯：20 dB 時 4 盞 LED 的 BER 分別是 0.027、0.092、0.205、0.283，分到的功率越少，BER 越高。",
+          en: "With uniform allocation the four layers have equal amplitudes, SIC cannot separate them, and the overall BER stays around 0.37 at every SNR. With fixed allocation the overall BER falls as SNR rises, reaching 0.0077 at 30 dB. The LEDs also differ sharply: at 20 dB their BERs are 0.027, 0.092, 0.205 and 0.283 — the less power an LED gets, the higher its BER."
+        }
       }
     },
     {
