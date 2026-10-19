@@ -1,3 +1,7 @@
 data/assets/draft.txt
 data/assets/projects/games/Cubethon-demo.MOV
 data/assets/projects/games/Flappy-Bird-3D-demo.MOV
+# 手機原圖（含 GPS），網站用的是縮小後的 biometrics_grip / sensor / recording.jpg
+data/assets/projects/biometrics/biometrics2.jpeg
+data/assets/projects/biometrics/biometrics3.jpeg
+data/assets/projects/biometrics/biometrics4.jpeg

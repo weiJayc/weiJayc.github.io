@@ -52,7 +52,19 @@ window.SITE = {
       image: "data/assets/projects/biometrics/biometrics.png",
       media: [
         {
-          src: "data/assets/projects/biometrics/biometrics_datarecording.png", wide: true,
+          src: "data/assets/projects/biometrics/biometrics_grip.jpg",
+          caption: { zh: "受試者模擬開門的動作握住門把。", en: "A subject grips the handle as if opening the door." }
+        },
+        {
+          src: "data/assets/projects/biometrics/biometrics_sensor.jpg",
+          caption: { zh: "矩陣壓力感測器包覆在門把上，訊號經排線接出。", en: "The matrix pressure sensor wraps around the handle; its signals run out through a flat cable." }
+        },
+        {
+          src: "data/assets/projects/biometrics/biometrics_recording.jpg",
+          caption: { zh: "錄製資料時，筆電上的錄製程式即時顯示壓力熱圖。", en: "While a subject grips the handle, the recording app on the laptop shows a live pressure heatmap." }
+        },
+        {
+          src: "data/assets/projects/biometrics/biometrics_datarecording.png",
           caption: { zh: "資料錄製程式：即時顯示 4×4 壓力熱圖，並依受試者分類儲存每一筆錄製。", en: "Data-recording app: a live 4×4 pressure heatmap, with each recording saved under the subject's label." }
         },
         {
