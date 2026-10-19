@@ -36,6 +36,14 @@ data/assets/        ← 專題圖片與影片（projects/）、課程報告 PDF�
 - 專題的 `key: { value, label }` 是卡片上的大數字；沒填就改顯示技術。
 - `fresh: true` 會在卡片上標「備審未收錄」，專題、研究、課程實驗都可以用。
 - 研究項目加上 `id` 就會變成可點的卡片，有自己的詳細頁（`#id`），欄位和專題相同：`context`、`body`（卡片摘要）、`key`、`image`、`media`、`tech`，以及 `academic: { motivation, method, result }`；`notes: [{ url, label }]` 會列在「筆記」。沒有 `id` 的研究項目維持整段文字顯示在卡片上。
+- 研究項目另外可以用這些欄位（研究計畫 `#proposal`、論文研讀 `#papers` 有範例）：
+  - `fullTitle`：詳細頁的大標題（卡片仍用 `title`）；`lede`：詳細頁的開頭段落（沒填就用 `body`）；`note`：開頭段落下方的灰底提示；`status`：卡片與詳細頁上的狀態標籤，例如「尚未驗證」。
+  - `sections: [{ label, text, rows, stack, list, after }]`：標題自訂的段落。`rows: [{ k, v }]` 是左邊有短標籤的條列（例如 RQ1），加 `stack: true` 時標籤自成一行；`list` 是一般條列；`after` 是條列之後的段落。
+  - `plan: { cols, rows: [{ task, span: [開始, 結束] }] }`：進度規劃表，`span` 是 `cols` 的索引（含頭尾）。
+  - `refs: [{ title, by, venue, year, url }]`：參考文獻，依陣列順序編號。
+  - `facts: [{ k, v }]`、`related: ["項目id"]`：右欄的其他資訊，以及連到網站上其他詳細頁的「相關」。
+  - `parts`：和課程實驗一樣，一個項目可以包含好幾份報告，網址 `#報告id` 會捲到那一份；報告裡可以用 `sections`、`media`（`mediaLabel` 改圖片區的標題），`papers: [編號]` 會列出引用的論文。加上 `hidden: true` 的報告（或課程作業）保留在資料裡但不顯示，網址也打不開。
+  - `readings: [{ topic, papers: [{ n, title, by, venue, year, url }] }]`：依主題分組的論文清單；被某份報告的 `papers` 用到的論文，旁邊會自動標上連到那份報告的標籤。
 
 本機預覽：直接用瀏覽器打開 `index.html` 或 `academic/index.html` 即可。
 

@@ -422,13 +422,174 @@ window.SITE = {
     }
   ],
 
-  // 研究所版：研究經驗與研究計畫
+  // 研究所版：研究計畫與研究經驗
   research: [
-    // 有 id 的研究項目會變成可點的卡片，並有自己的詳細頁（欄位同專題）
+    // 有 id 的研究項目會變成可點的卡片，並有自己的詳細頁（欄位同專題，另外可用 sections、plan、refs、parts、readings）
+    {
+      id: "proposal",
+      title: { zh: "研究計畫：MIMO-NOMA 可見光通訊的自適應分群", en: "Proposal: Adaptive User Grouping for MIMO-NOMA VLC" },
+      // 詳細頁的大標題用計畫書上的完整題目
+      fullTitle: {
+        zh: "室內 MIMO-NOMA 可見光通訊之 SIC 可解碼條件導向自適應分群與功率配置",
+        en: "SIC-Decodability-Driven Adaptive User Grouping and Power Allocation for Indoor MIMO-NOMA Visible Light Communication"
+      },
+      context: { zh: "碩士班研究計畫", en: "Master's research proposal" },
+      status: { zh: "尚未驗證", en: "Not yet validated" },
+      period: "",
+      body: {
+        zh: "人一多，NOMA 的 SIC 就解不開；分組又得把頻寬切碎。我想用 SIC 的可解碼條件，決定一組該放幾個人。",
+        en: "With many users, NOMA's SIC breaks down; grouping them splits the bandwidth. I propose using the SIC decodability condition to decide how many users each group should hold."
+      },
+      lede: {
+        zh: "現有 MIMO-NOMA 可見光通訊的研究，多半讓每顆 LED 同時服務所有使用者，人一多 SIC 就解不開；固定兩人一組雖然避開了這個問題，卻得把有限的頻寬切成很多份。這份計畫想回答：一組該放幾個人？",
+        en: "Most MIMO-NOMA visible light communication work has every LED serve all users at once, and with many users SIC can no longer decode. Fixed pairs avoid that but slice the limited bandwidth into many pieces. This proposal asks: how many users should a group hold?"
+      },
+      note: {
+        zh: "這份研究計畫是我自己為碩士班甄試構想的。目前完成的是文獻研讀與計畫撰寫；計畫中的推導、演算法與模擬都還沒有實作驗證。",
+        en: "I conceived this proposal on my own for my master's application. So far I have done the literature review and written the proposal; the derivations, algorithm and simulations in it have not yet been implemented or validated."
+      },
+      key: { value: "63×", label: { zh: "6 人一組至少需要的功率，是單人的 63 倍（τ = 0 dB、增益相同）", en: "Minimum power for a group of six vs. one user (τ = 0 dB, equal gains)" } },
+      tech: ["MATLAB"],
+      images: [
+        {
+          src: "data/assets/research/proposal_grouping.svg",
+          caption: {
+            zh: "示意圖：同樣 6 位使用者的三種分法，寬度是頻寬、高度是功率，每一層是一位使用者。左：全部同組，頻寬最多，但最強的使用者只分到約 1/63 的功率；中：固定兩人一組，SIC 容易，但頻寬切成 3 份；右：本計畫要回答的問題——由 SIC 可解碼條件決定每組人數與頻寬。（功率比例是 τ = 0 dB、增益相同時的最低需求）",
+            en: "Schematic: three ways to group the same six users. Width is bandwidth, height is power, and each layer is one user. Left: one group keeps the full bandwidth, but the strongest user gets only about 1/63 of the power. Middle: fixed pairs make SIC easy but split the bandwidth three ways. Right: the question this proposal asks — let the SIC decodability condition set each group's size and bandwidth. (Power shares are the minimum needed at τ = 0 dB with equal gains.)"
+          }
+        }
+      ],
+      notes: [
+        { url: "https://hackmd.io/GxMzCZaQSi62NSOGKfi6pg?view", label: { zh: "GRPA 與 NGDPA：VLC NOMA 的功率分配", en: "GRPA & NGDPA: power allocation for VLC NOMA (in Chinese)" } }
+      ],
+      related: ["lifi", "papers"],
+      // sections：標題自訂的段落；rows 是左邊有短標籤的條列，stack: true 時標籤自成一行
+      sections: [
+        {
+          label: { zh: "動機", en: "Why" },
+          text: {
+            zh: [
+              "可見光通訊用照明 LED 傳資料，但商用白光 LED 的調變頻寬只有數 MHz，多位使用者共用頻寬的效率因此成為瓶頸。NOMA 讓多位使用者以不同功率疊加在同一段頻寬上，接收端再以連續干擾消除（SIC）依序解碼；在多顆 LED、多顆光偵測器的 MIMO 架構下，已有 GRPA、NGDPA、NLGRPA、PGRPA 等閉合式功率配置公式。",
+              "這些公式都讓每顆 LED 同時服務所有使用者。我研讀這些論文時注意到，使用者一多可能出現三個問題（我還沒有自己推導驗證，這正是 RQ1 要回答的）：PGRPA 在 10 位使用者、增益相近時，最強與最弱者的功率比可達 2⁻⁴⁵ ≈ 2.8 × 10⁻¹⁴，強使用者的訊號會被雜訊淹沒；NLGRPA 在使用者增益低於最強者約 70.7% 時，相鄰係數會大於 1，通道較好的人反而分到較多功率；而這些論文都以通道增益總和排序使用者，但光偵測器間距只有 4 cm、通道高度相關，經過迫零（ZF）後，增益總和較大的人不一定比較強。"
+            ],
+            en: [
+              "Visible light communication sends data over lighting LEDs, but commercial white LEDs offer only a few MHz of modulation bandwidth, so sharing it among many users is the bottleneck. NOMA superposes several users on the same band at different power levels, and the receiver separates them with successive interference cancellation (SIC). For MIMO-VLC with multiple LEDs and photodiodes, closed-form power allocation schemes such as GRPA, NGDPA, NLGRPA and PGRPA already exist.",
+              "All of them have every LED serve every user. Reading these papers, I noticed three problems that may appear as the number of users grows — I have not yet verified them with my own derivations, which is exactly what RQ1 sets out to do. With PGRPA, ten users with similar gains give a power ratio of 2⁻⁴⁵ ≈ 2.8 × 10⁻¹⁴ between the strongest and weakest user, burying the strong user's signal in noise. With NLGRPA, the ratio between adjacent coefficients exceeds 1 once a user's gain falls below about 70.7% of the strongest, so a better channel gets more power. And these papers order users by the sum of channel gains, but with photodiodes only 4 cm apart the channel is highly correlated, so after zero-forcing (ZF) a larger gain sum does not guarantee a stronger user."
+            ]
+          }
+        },
+        {
+          label: { zh: "研究缺口", en: "The gap" },
+          text: {
+            zh: "一個自然的解法是分組：組內用 NOMA，組與組之間用頻率分開。但現有作法多半固定兩人一組，頻寬必須切成 N/2 份；可變的群組大小只出現在單 LED 或發射端預編碼的系統。在「每顆 LED 各自做 NOMA、接收端用 ZF 分離」的 MIMO-VLC 中，還沒有方法回答「一組該放幾個人」。這裡還多了一層單 LED 沒有的困難：同一位使用者經過 ZF 後，在不同 LED 上的強弱順序可能不同，但他只能屬於一組。",
+            en: "A natural fix is to group users: NOMA within a group, separate frequency bands between groups. Existing work mostly fixes groups at two users, which cuts the bandwidth into N/2 pieces; variable group sizes appear only in single-LED or transmitter-precoded systems. For MIMO-VLC where each LED runs its own NOMA and the receiver separates streams with ZF, nothing yet answers how many users a group should hold. There is also a difficulty single-LED systems lack: after ZF, a user's strength ranking can differ from LED to LED, yet the user can belong to only one group."
+          }
+        },
+        {
+          label: { zh: "核心的取捨", en: "The trade-off" },
+          text: {
+            zh: "組內人數越多，滿足 SIC 所需的總功率大約以 (1 + τ)^M 的速度成長（τ 是最低 SINR 門檻，M 是組內人數）：τ = 0 dB 且增益相同時，6 人一組至少需要單人 63 倍的功率。反過來，組數越多，每組分到的頻寬越窄，要達到同樣的速率，τ 就得越高。我想以這個可解碼條件為核心，設計快速、可解釋、有保證的分群與功率配置方法。",
+            en: "The more users in a group, the faster the total power needed for SIC grows — roughly as (1 + τ)^M, where τ is the minimum SINR threshold and M the group size. At τ = 0 dB with equal gains, a group of six needs at least 63 times the power of a single user. Conversely, the more groups, the narrower each group's band, so τ must rise to reach the same rate. I want to build grouping and power allocation around this decodability condition: fast, explainable and with guarantees."
+          }
+        },
+        {
+          label: { zh: "研究問題", en: "Research questions" },
+          rows: [
+            { k: "RQ1", v: { zh: "現有閉合式功率配置在組內人數增加時，在什麼條件下會違反功率排序、超出可用的動態範圍，或無法滿足 SIC 解碼？", en: "Under what conditions do existing closed-form allocations break power ordering, exceed the usable dynamic range, or fail SIC decoding as groups grow?" } },
+            { k: "RQ2", v: { zh: "在每顆 LED 各自 NOMA、接收端 ZF 的架構下，給定最低速率、組數與殘餘 SIC 係數 ε，一組最多能容納幾位使用者？", en: "With per-LED NOMA and receiver ZF, given a minimum rate, the number of groups and a residual-SIC factor ε, how many users can one group hold at most?" } },
+            { k: "RQ3", v: { zh: "各 LED 的有效增益排序不一致時，能否以約 O(N²) 的確定性演算法完成分群與組間頻寬分配，並讓最小速率接近窮舉最佳解？", en: "When effective-gain rankings differ across LEDs, can a deterministic algorithm of about O(N²) handle grouping and inter-group bandwidth allocation with a minimum rate close to the exhaustive optimum?" } },
+            { k: "RQ4", v: { zh: "在不完美 SIC 與不完美 CSI 下，自適應分群和全部同組、固定兩人一組、OFDMA 相比，最小速率、總速率、公平性與運算時間各差多少？", en: "Under imperfect SIC and CSI, how does adaptive grouping compare with a single group, fixed pairs and OFDMA in minimum rate, sum rate, fairness and runtime?" } }
+          ]
+        },
+        {
+          label: { zh: "預計方法", en: "Planned method" },
+          text: {
+            zh: [
+              "模擬沿用文獻常見的設定：5 × 5 × 3 公尺的房間，天花板上 2 × 2 或 4 × 4 顆 LED，每位使用者有多顆間距 4 cm 的光偵測器，採用 DCO-OFDM 與 Lambertian 直視通道。N 位使用者分成 G 組，每組佔一段互不重疊的子頻帶；組內每顆 LED 以 NOMA 疊加送出，接收端以 ZF 分離各 LED 的串流。",
+              "先從「每個串流都要達到 SINR 門檻 τ」推導一組在每顆 LED 上至少需要的功率，再結合門檻與子頻帶寬度的關係，得到最大群組大小的設計準則。分群演算法暫稱 DAG（Decodability-Aware Grouping），分成五步：依 ZF 後的有效增益排序；對每個組數 G 以跳號方式產生強弱混合的候選分組；在每顆 LED 上檢查可行性，不可行就交換成員或拆組；先給每組達到最低速率所需的頻寬，剩下的以二分法分配；最後比較所有 G 的結果，總複雜度約 O(N²)。",
+              "比較對象包括全部同組（搭配 GRPA、NGDPA、NLGRPA、PGRPA 等）、固定兩人一組（含以模擬退火分配子載波的方法）、OFDMA，以及 N ≤ 10 時的窮舉最佳解（N = 10 時約 11.6 萬種分法）。評估最小速率、總速率、Jain 公平性指標、零速率使用者比例與運算時間，並掃描殘餘 SIC 係數與 CSI 誤差。"
+            ],
+            en: [
+              "The simulation follows settings common in the literature: a 5 × 5 × 3 m room with a 2 × 2 or 4 × 4 LED array on the ceiling, several photodiodes 4 cm apart per user, DCO-OFDM and a Lambertian line-of-sight channel. N users form G groups, each on its own non-overlapping sub-band; within a group, every LED superposes the members' signals with NOMA, and the receiver separates the LED streams with ZF.",
+              "Requiring every stream to reach an SINR threshold τ gives the minimum power a group needs on each LED; combined with how τ depends on sub-band width, this yields a design rule for the maximum group size. The grouping algorithm, tentatively DAG (Decodability-Aware Grouping), has five steps: sort users by effective gain after ZF; for each group count G, deal users out in strides so every group mixes strong and weak users; check feasibility on every LED and swap members or split groups that fail; give each group the bandwidth its minimum rate needs and split the rest by bisection; finally compare all G — about O(N²) overall.",
+              "Baselines are a single group (with GRPA, NGDPA, NLGRPA, PGRPA and others), fixed pairs (including simulated-annealing subcarrier allocation), OFDMA, and the exhaustive optimum for N ≤ 10 (about 116,000 groupings at N = 10). Metrics are minimum rate, sum rate, Jain's fairness index, the share of zero-rate users and runtime, swept over residual-SIC factors and CSI errors."
+            ]
+          }
+        },
+        {
+          label: { zh: "預期成果", en: "Expected outcomes" },
+          list: {
+            zh: [
+              "現有閉合式功率配置在組內人數增加時的失效條件（功率排序、動態範圍、可解碼性）",
+              "MIMO-VLC 下，由 SIC 可解碼條件推導的最大群組大小準則",
+              "約 O(N²) 的自適應分群演算法與具保證的組內功率配置，並量化與窮舉最佳解、模擬退火方法的差距與運算時間",
+              "公開可重現的模擬程式碼"
+            ],
+            en: [
+              "Failure conditions of existing closed-form allocations as groups grow (power ordering, dynamic range, decodability)",
+              "A maximum group-size rule for MIMO-VLC derived from the SIC decodability condition",
+              "An adaptive grouping algorithm of about O(N²) with guaranteed intra-group power allocation, with its gap and runtime against the exhaustive optimum and simulated annealing",
+              "Open, reproducible simulation code"
+            ]
+          },
+          after: {
+            zh: "我不預設自適應分群在所有情境下都會勝出；如果結果顯示某些條件下固定兩人一組已經足夠，能說清楚「什麼條件下該幾人一組」本身也是有價值的結論。",
+            en: "I don't assume adaptive grouping will win everywhere. If fixed pairs turn out to be enough under some conditions, being able to say when each group size is right is a useful result in itself."
+          }
+        },
+        {
+          label: { zh: "可能遇到的困難", en: "Risks" },
+          stack: true,
+          rows: [
+            { k: { zh: "DAG 離最佳解太遠", en: "DAG falls far short of the optimum" }, v: { zh: "先以小規模窮舉量化差距；差距過大就加入局部交換搜尋，仍控制在多項式時間內。", en: "Quantify the gap with small exhaustive searches first; if it is too large, add local swap search while staying polynomial." } },
+            { k: { zh: "各 LED 排序不一致，很多組不可行", en: "Inconsistent rankings make many groups infeasible" }, v: { zh: "改以各 LED 中最弱的有效增益排序，或允許該組在個別 LED 上改用正交傳輸。", en: "Sort by each user's weakest effective gain across LEDs, or let a group fall back to orthogonal transmission on individual LEDs." } },
+            { k: { zh: "最大群組大小沒有簡單的封閉式", en: "No simple closed form for the maximum group size" }, v: { zh: "改為推導上下界或建立數值查表，再以模擬驗證。", en: "Derive upper and lower bounds or build a numerical lookup table instead, then check it by simulation." } },
+            { k: { zh: "重現結果與原論文不同", en: "Reproduced results differ from the papers" }, v: { zh: "逐點比對數值、說明假設上的差異，並以一致的 SINR 模型為準。", en: "Compare values point by point, document differing assumptions and settle on one consistent SINR model." } }
+          ]
+        }
+      ],
+      // 進度規劃表：span 是 cols 的索引（含頭尾）
+      plan: {
+        cols: [
+          { zh: "碩一上", en: "Y1 fall" }, { zh: "碩一下", en: "Y1 spring" }, { zh: "碩一暑假", en: "Y1 summer" },
+          { zh: "碩二上", en: "Y2 fall" }, { zh: "碩二下", en: "Y2 spring" }
+        ],
+        rows: [
+          { task: { zh: "修課（數位通訊、偵測與估計、凸最佳化、光通訊）", en: "Courses (digital comms, detection & estimation, convex optimization, optical comms)" }, span: [0, 1] },
+          { task: { zh: "重現文獻與現有功率配置", en: "Reproduce prior work and existing power allocations" }, span: [0, 1] },
+          { task: { zh: "RQ1 失效條件分析", en: "RQ1: failure-condition analysis" }, span: [0, 1] },
+          { task: { zh: "RQ2 最大群組大小準則推導", en: "RQ2: maximum group-size rule" }, span: [1, 2] },
+          { task: { zh: "RQ3 DAG 分群演算法與窮舉基準", en: "RQ3: DAG grouping and exhaustive baseline" }, span: [1, 3] },
+          { task: { zh: "RQ4 不完美 SIC／CSI 模擬與運算時間比較", en: "RQ4: imperfect SIC/CSI simulation and runtime comparison" }, span: [2, 3] },
+          { task: { zh: "延伸：接收器傾角、學習式調參（選做）", en: "Extensions: receiver tilt, learned tuning (optional)" }, span: [3, 3] },
+          { task: { zh: "投稿研討會或期刊", en: "Submit to a conference or journal" }, span: [2, 3] },
+          { task: { zh: "論文撰寫與口試", en: "Thesis writing and defense" }, span: [3, 4] }
+        ]
+      },
+      refs: [
+        { title: "Non-orthogonal multiple access for visible light communications", by: "H. Marshoud et al.", venue: "IEEE Photon. Technol. Lett.", year: 2016, url: "https://doi.org/10.1109/LPT.2015.2479600" },
+        { title: "User pairing and power allocation strategies for downlink NOMA-based VLC systems: An overview", by: "T. Dogra, M. R. Bharti", venue: "AEU Int. J. Electron. Commun.", year: 2022, url: "https://doi.org/10.1016/j.aeue.2022.154184" },
+        { title: "On the performance of MIMO-NOMA-based visible light communication systems", by: "C. Chen et al.", venue: "IEEE Photon. Technol. Lett.", year: 2018, url: "https://doi.org/10.1109/LPT.2017.2785964" },
+        { title: "Enhancing power allocation efficiency of NOMA aided-MIMO downlink VLC networks", by: "H. Wang et al.", venue: "Opt. Commun.", year: 2020, url: "https://doi.org/10.1016/j.optcom.2019.124497" },
+        { title: "Efficient power allocation for downlink MIMO-NOMA-based visible light communication systems", by: "G. T. Tola et al.", venue: "Cogent Eng.", year: 2024, url: "https://doi.org/10.1080/23311916.2024.2340234" },
+        { title: "An improved power allocation scheme for downlink NOMA-based MIMO visible light communication systems", by: "T. Dogra, M. R. Bharti", venue: "Int. J. Commun. Syst.", year: 2025, url: "https://doi.org/10.1002/dac.6135" },
+        { title: "Performance analysis of power allocation and user-pairing techniques for MIMO-NOMA in VLC systems", by: "H. S. Ibrahim et al.", venue: "Photonics", year: 2024, url: "https://doi.org/10.3390/photonics11030206" },
+        { title: "On the achievable max-min user rates in multi-carrier centralized NOMA-VLC networks", by: "O. Maraqa et al.", venue: "Sensors", year: 2021, url: "https://doi.org/10.3390/s21113705" },
+        { title: "QoE based joint adaptive user grouping and power allocation in indoor VLC-NOMA network", by: "H. Liu et al.", venue: "Telecommun. Syst.", year: 2026, url: "https://doi.org/10.1007/s11235-026-01428-w" },
+        { title: "MU-MIMO NOMA with linear precoding techniques in indoor downlink VLC systems", by: "V. S. Rajput et al.", venue: "IEEE VTC2020-Spring", year: 2020 },
+        { title: "Dynamic user clustering and power allocation for uplink and downlink non-orthogonal multiple access (NOMA) systems", by: "M. S. Ali et al.", venue: "IEEE Access", year: 2016, url: "https://doi.org/10.1109/ACCESS.2016.2604821" },
+        { title: "Optimal power allocation in downlink multicarrier NOMA systems: Theory and fast algorithms", by: "S. Rezvani et al.", venue: "IEEE J. Sel. Areas Commun.", year: 2022, url: "https://arxiv.org/abs/2107.06678" },
+        { title: "On the optimality of power allocation for NOMA downlinks with individual QoS constraints", by: "Z. Yang et al.", venue: "IEEE Commun. Lett.", year: 2017, url: "https://doi.org/10.1109/LCOMM.2017.2689763" },
+        { title: "Deep Q-learning-based resource allocation in NOMA visible light communications", by: "A. Al Hammadi et al.", venue: "IEEE Open J. Commun. Soc.", year: 2022, url: "https://doi.org/10.1109/OJCOMS.2022.3219014" },
+        { title: "Wireless infrared communications", by: "J. M. Kahn, J. R. Barry", venue: "Proc. IEEE", year: 1997, url: "https://doi.org/10.1109/5.554222" },
+        { title: "Fundamental analysis for visible-light communication system using LED lights", by: "T. Komine, M. Nakagawa", venue: "IEEE Trans. Consum. Electron.", year: 2004, url: "https://doi.org/10.1109/TCE.2004.1277847" },
+        { title: "NOMA for VLC downlink transmission with random receiver orientation", by: "Y. Yapici, I. Guvenc", venue: "IEEE Trans. Commun.", year: 2019, url: "https://doi.org/10.1109/TCOMM.2019.2914195" }
+      ]
+    },
     {
       id: "lifi",
       title: { zh: "LiFi 光通訊模擬：NOMA 與 SIC", en: "LiFi Simulation: NOMA with SIC" },
-      context: { zh: "進行中的研究", en: "Ongoing research" },
+      context: { zh: "協助指導老師建立模擬環境", en: "Simulation setup for my advisor" },
       period: "", // 【待填】
       body: {
         zh: "用 MATLAB 建立 4 盞 LED、1 個接收器的可見光通訊模擬，依序完成通道計算、功率分配、疊加傳輸與 SIC 解碼，並比較不同功率分配下的 BER。",
@@ -441,6 +602,7 @@ window.SITE = {
         { url: "https://hackmd.io/uReNJKYCQDaCHgA-3yuC_g", label: { zh: "LiFi Basic Knowledge：傳輸流程九步驟", en: "LiFi Basic Knowledge: the nine-step transmission chain (in Chinese)" } },
         { url: "https://hackmd.io/GxMzCZaQSi62NSOGKfi6pg?view", label: { zh: "GRPA 與 NGDPA：VLC NOMA 的功率分配", en: "GRPA & NGDPA: power allocation for VLC NOMA (in Chinese)" } }
       ],
+      related: ["proposal"],
       media: [
         {
           src: "data/assets/research/research_overall_BER_curves.png", wide: true,
@@ -467,21 +629,204 @@ window.SITE = {
       }
     },
     {
-      title: { zh: "研究計畫：室內 MIMO-NOMA 可見光通訊", en: "Proposal: Indoor MIMO-NOMA Visible Light Communication" },
-      period: "",
-      body: {
-        zh: "以 SIC 可解性為依據，進行自適應的使用者分組與功率分配。",
-        en: "SIC-decodability-driven adaptive user grouping and power allocation."
-      }
-    },
-    {
-      title: { zh: "論文研讀：智慧通訊系統設計（課程）", en: "Paper Reading: Intelligent Communication System Design (course)" },
-      period: "",
+      id: "papers",
+      title: { zh: "論文研讀：智慧通訊系統設計", en: "Paper Reading: Intelligent Communication System Design" },
+      context: { zh: "指導老師開設的課程", en: "Course taught by my advisor" },
+      period: "2026",
       fresh: true,
+      // 期中、期末報告目前隱藏（parts 裡的 hidden: true）；要顯示時，把 hidden 拿掉，並把下面幾段文字換回註解裡的版本
+      // body 原文：「一學期研讀 18 篇 LiFi 與近場通訊論文。我以全英文上台報告其中一篇，並寫了期中、期末兩份研究報告。」
+      //           "18 papers on LiFi and near-field communication in one semester. I presented one of them in English and wrote a midterm and a final research report."
       body: {
-        zh: "課程以研讀近年通訊論文為主（共 18 篇，2020–2026），主題包含近場 beam focusing、ISAC、無線電力傳輸，以及 LiFi 的 MIMO-OFDM、同步與以深度學習做定位。其中 LiFi 相關論文與我的可見光通訊研究方向直接相關。",
-        en: "A reading-based course covering 18 recent communication papers (2020–2026): near-field beam focusing, ISAC, wireless power transfer, and LiFi topics including MIMO-OFDM, synchronization and deep-learning-based positioning. The LiFi papers relate directly to my visible light communication research direction."
-      }
+        zh: "一學期研讀 18 篇 LiFi 與近場通訊論文，我負責以全英文上台報告其中一篇。",
+        en: "18 papers on LiFi and near-field communication in one semester; I presented one of them entirely in English."
+      },
+      images: [
+        { src: "data/assets/research/papers_slide04.jpg", caption: { zh: "我的英文投影片：系統運作的四個步驟。", en: "From my English slides: how the system works, in four steps." } }
+      ],
+      facts: [
+        { k: { zh: "論文", en: "Papers" }, v: { zh: "18 篇（2021–2026 發表）", en: "18, published 2021–2026" } },
+        { k: { zh: "主題", en: "Topics" }, v: { zh: "LiFi／可見光通訊 7 篇、近場通訊 10 篇、其他 1 篇", en: "LiFi/VLC 7, near-field 10, other 1" } }
+      ],
+      // role 原本還有「期中研究報告（第 3 篇）」「期末研究報告（第 10、12 篇）」／"Midterm report (paper 3)", "Final report (papers 10 and 12)"
+      role: {
+        zh: ["以全英文報告第 15 篇"],
+        en: ["English presentation of paper 15"]
+      },
+      related: ["proposal"],
+      sections: [
+        {
+          label: { zh: "課程形式", en: "Format" },
+          // 原文在「我負責第 15 篇」後面還有「，另外也寫了期中與期末兩份研究報告」／", and I also wrote a midterm and a final research report"
+          text: {
+            zh: "這門課由我的指導老師開設，一學期研讀 18 篇近年的 LiFi 與近場通訊論文。每位同學負責一篇，製作投影片並以全英文上台報告；我負責第 15 篇。其中 LiFi 的論文和我的可見光通訊研究方向直接相關。",
+            en: "Taught by my advisor, this course covered 18 recent papers on LiFi and near-field communication in one semester. Each student took one paper, built slides and presented it entirely in English; mine was paper 15. The LiFi papers relate directly to my visible light communication research."
+          }
+        }
+      ],
+      // 三份報告；papers 是下方 readings 的論文編號，清單裡對應的論文會標上連到這份報告的標籤
+      // 網址 #paper15 會直接捲到該份報告；hidden: true 的報告不顯示（#midterm、#final 目前也打不開）
+      parts: [
+        {
+          id: "paper15",
+          label: { zh: "英文口頭報告", en: "English presentation" },
+          title: { zh: "以深度學習估計 LiFi 使用者的位置與手機方向", en: "Deep-learning position and orientation estimation for LiFi" },
+          papers: [15],
+          question: {
+            zh: "WiFi 與藍牙定位的誤差常在公尺等級。這篇論文用天花板上 25 顆 VCSEL 雷射的接收訊號，讓神經網路同時估出使用者的 3D 位置和手機的轉動角度。",
+            en: "WiFi and Bluetooth positioning are often off by meters. This paper feeds the signals received from 25 ceiling-mounted VCSEL lasers to a neural network that estimates both the user's 3D position and the phone's orientation."
+          },
+          sections: [
+            {
+              label: { zh: "論文內容", en: "The paper" },
+              text: {
+                zh: [
+                  "傳統定位方法容易陷入多個局部極小值、需要迭代求解，也常需要使用者位置或方向的先驗資訊。作者改用頻寬超過 1 GHz、光束較好控制的 VCSEL 取代 LED，在 1 × 1 × 3 公尺的房間天花板上放 5 × 5 顆（分散式與集中式兩種佈置）。接收端量測 25 個 SNR，交給三層隱藏層（100、50、20 個神經元）的 DNN，直接輸出 x、y、z 與 yaw、pitch、roll。",
+                  "訓練資料共 10 萬筆，全部由模擬產生：隨機產生使用者位置與手機方向、計算 25 個 SNR，再依 Poisson 分布隨機遮擋部分光路。和基準的 CNN 相比，平均位置誤差從 14.55 cm 降到 4.51 cm，yaw 角誤差從 12.28° 降到 8.85°，運算量也少得多；遮擋率 10%、30% 時仍維持不錯的表現，到 50% 時明顯變差。"
+                ],
+                en: [
+                  "Conventional positioning methods get stuck in local minima, need iterative solvers and often require prior knowledge of the user's position or orientation. The authors replace LEDs with VCSELs, which offer more than 1 GHz of bandwidth and better beam control, placing a 5 × 5 array on the ceiling of a 1 × 1 × 3 m room in two layouts, distributed and collocated. The receiver measures 25 SNRs, and a DNN with three hidden layers (100, 50 and 20 neurons) outputs x, y, z plus yaw, pitch and roll directly.",
+                  "All 100,000 training samples are simulated: random user positions and phone orientations, the resulting 25 SNRs, and random light-path blockages drawn from a Poisson distribution. Against the baseline CNN, mean position error falls from 14.55 cm to 4.51 cm and yaw error from 12.28° to 8.85°, with far less computation. Performance holds up at 10% and 30% blockage rates but degrades clearly at 50%."
+                ]
+              }
+            },
+            {
+              label: { zh: "我的報告", en: "My presentation" },
+              text: {
+                zh: "我把論文整理成 17 頁英文投影片，依序介紹應用情境、傳統方法的限制、系統運作流程、為什麼選 VCSEL、高斯光束的通道模型與 SNR 公式，以及 DNN 架構與實驗結果，並以全英文上台報告。論文中產生資料集的 Algorithm 1 原本是一段虛擬碼，我自己把它畫成流程圖，讓聽眾比較容易跟上每一步。同學針對這篇論文一共提出 16 個問題，我都逐一回答；問題主要圍繞四個主題：分散式與集中式佈置的差異、為什麼這麼簡單的 DNN 能贏過 CNN、遮擋對位置與方向估計的影響，以及使用者轉動或移動時定位是否穩定。",
+                en: "I condensed the paper into 17 English slides — the use case, the limits of conventional methods, how the system works, why VCSELs, the Gaussian-beam channel model and SNR formula, then the DNN design and results — and presented it entirely in English. The paper gives Algorithm 1 for dataset generation as pseudocode; I drew it as a flowchart myself so the audience could follow each step. Classmates raised 16 questions on the paper and I answered every one; they clustered around four themes: distributed vs. collocated layouts, why such a simple DNN beats a CNN, how blockage affects position vs. orientation estimates, and whether positioning stays stable when the user rotates or moves."
+              }
+            }
+          ],
+          mediaLabel: { zh: "投影片節錄", en: "Selected slides" },
+          media: [
+            { src: "data/assets/research/papers_slide06.jpg", caption: { zh: "兩種 VCSEL 佈置：分散式與集中式。", en: "The two VCSEL layouts: distributed and collocated." } },
+            { src: "data/assets/research/papers_slide09.jpg", caption: { zh: "DNN 架構：輸入 25 個 SNR，輸出 x、y、z 與 yaw、pitch、roll。", en: "The DNN: 25 SNRs in; x, y, z, yaw, pitch and roll out." } },
+            { src: "data/assets/research/papers_slide10.jpg", caption: { zh: "論文中產生資料集的 Algorithm 1 原本是虛擬碼，我把它畫成流程圖。", en: "Algorithm 1 for dataset generation is pseudocode in the paper; I drew it as a flowchart." } },
+            { src: "data/assets/research/papers_slide15.jpg", caption: { zh: "與基準方法比較：平均位置誤差 4.51 cm（基準 CNN 為 14.55 cm），運算量也較少。", en: "Against the baselines: 4.51 cm mean position error (14.55 cm for the baseline CNN) with less computation." } }
+          ]
+        },
+        {
+          id: "midterm",
+          hidden: true, // 內容還沒有十足把握，先不顯示
+          label: { zh: "期中研究報告", en: "Midterm report" },
+          title: { zh: "近場多使用者 MIMO 的波束聚焦", en: "Beam focusing for near-field multiuser MIMO" },
+          papers: [3],
+          question: {
+            zh: "遠場的平面波只能分辨角度。站在同一個角度上的兩位使用者，能不能靠「距離不同」分開？",
+            en: "Far-field plane waves resolve only angle. Can two users at the same angle be told apart by their distance?"
+          },
+          sections: [
+            {
+              label: { zh: "報告內容", en: "What I covered" },
+              text: {
+                zh: [
+                  "我先從頻率與天線尺寸說明近場為什麼會變成常態：近場與遠場的界線是 2D²/λ，在 28 GHz 使用半公尺的天線時，近場範圍就延伸到約 47 公尺外。在近場內，電磁波是帶有距離資訊的球面波，基地台因此能在同一個角度、不同的距離上各自形成焦點。",
+                  "接著整理論文對三種天線架構的訊號模型與演算法：全數位架構以 WMMSE 與交替最佳化求解，作為效能基準；混合式架構的移相器只能改相位，以黎曼共軛梯度去逼近全數位的解；動態超穎表面天線（DMA）受洛倫茲限制，先放寬限制求解再投影回去。模擬中，單一使用者時 DMA 因為元件間距可以小到 λ/5、能塞進更多元件而表現最好；多使用者時則是全數位較好；混合式在使用者超過 RF chain 數量的一半（8 人）後，總速率反而下降。"
+                ],
+                en: [
+                  "I began with why the near field is becoming the norm: the near/far boundary is 2D²/λ, so a half-meter antenna at 28 GHz has a near field reaching about 47 m. Inside it, waves are spherical and carry distance information, letting the base station focus beams at different distances along the same angle.",
+                  "I then summarized the signal models and algorithms for three antenna architectures. Fully digital arrays are solved with WMMSE and alternating optimization as the performance benchmark; hybrid arrays, whose phase shifters can only change phase, use Riemannian conjugate gradient to approximate the fully digital solution; dynamic metasurface antennas (DMAs), bound by the Lorentzian constraint, relax it, solve, then project back. In simulation, DMAs did best with a single user because their element spacing can shrink to λ/5 and fit more elements; fully digital did best with multiple users; and hybrid arrays lost sum rate once users exceeded half the number of RF chains (8 users)."
+                ]
+              }
+            },
+            {
+              label: { zh: "我的觀察", en: "My observation" },
+              text: {
+                zh: "論文說遠場波束會讓較遠的使用者幾乎沒有速率。我發現這來自模擬的設定：目標是最大化總速率，而且只靠空間多工。兩人角度相同、空間上分不開時，最佳解就是把功率幾乎全給通道較好的那位。實際的 4G、5G 網路會改用分時或分頻，讓每個人都有基本速率。所以波束聚焦真正的價值，不是「讓遠的人有訊號」，而是讓兩人在同一時間、同一頻段都能高速傳輸，不必再切分資源。",
+                en: "The paper says far-field beams leave the farther user with almost no rate. I traced this to the simulation setup: the objective is maximum sum rate using spatial multiplexing alone. When two users share an angle and cannot be separated in space, the optimum is to give nearly all the power to the user with the better channel. Real 4G and 5G networks would fall back on time or frequency division so everyone gets a baseline rate. So the real value of beam focusing is not giving the far user a signal at all, but letting both users run at high rates in the same time slot and band without splitting resources."
+              }
+            }
+          ]
+        },
+        {
+          id: "final",
+          hidden: true, // 內容還沒有十足把握，先不顯示
+          label: { zh: "期末研究報告", en: "Final report" },
+          title: { zh: "近場無線充電：把感測輔助的能量聚焦搬到 DMA 上", en: "Near-field wireless charging: moving sensing-assisted focusing onto DMAs" },
+          papers: [10, 12],
+          question: {
+            zh: "第 10 篇用雷達感測縮短近場無線充電前的定位時間，第 12 篇用 DMA 降低超大型天線的耗電與成本。兩者能直接合併嗎？",
+            en: "Paper 10 uses radar sensing to cut the time spent locating devices before near-field wireless charging; paper 12 uses DMAs to cut the power and cost of extremely large arrays. Can the two simply be combined?"
+          },
+          sections: [
+            {
+              label: { zh: "三個衝突", en: "Three conflicts" },
+              text: {
+                zh: "我原本想把第 10 篇的感測演算法直接用在第 12 篇的 DMA 硬體上，同時省時間又省電。但逐條比對兩篇的公式後，我發現若不重新推導就直接合併，系統會在三個地方出錯：",
+                en: "I first wanted to run paper 10's sensing algorithm directly on paper 12's DMA hardware, saving both time and power. Comparing the two papers' formulas line by line, I found that combining them without re-deriving would break the system in three places:"
+              },
+              stack: true,
+              rows: [
+                {
+                  k: { zh: "硬體降維，可視區域演算法無法運作", en: "Dimensionality loss breaks visibility-region detection" },
+                  v: {
+                    zh: "第 10 篇的全數位天線每顆都有獨立的 RF chain，能收到 N × 1（例如 256 維）的完整回波，再用滑動視窗找出未被遮蔽的可視區域（VR）。DMA 為了省電只有少數 RF chain（例如 16 條），回波在微帶線上就已經疊加，只剩 N_d × 1 的訊號，VR 演算法需要的 256 個天線資料拿不到。",
+                    en: "Paper 10's fully digital array gives every antenna its own RF chain, so it receives the full N × 1 echo (e.g. 256 entries) and slides a window over it to find the unblocked visibility region (VR). A DMA saves power with only a few RF chains (e.g. 16); echoes already add up along each microstrip, leaving an N_d × 1 signal, so the 256 per-antenna values the VR algorithm needs are not available."
+                  }
+                },
+                {
+                  k: { zh: "雷達回波模型不符", en: "Mismatched radar echo model" },
+                  v: {
+                    zh: "第 10 篇的回波模型假設訊號只經過自由空間，所有延遲與相位差都來自裝置的位置。但在 DMA 中，訊號還會經過微帶線內部的傳播延遲與元件響應；直接套用會把硬體內部的延遲誤認成裝置的距離，算出的 3D 座標偏掉，能量波束也就打不到裝置。",
+                    en: "Paper 10's echo model assumes free-space propagation only, attributing every delay and phase difference to the device's position. In a DMA the signal also passes through microstrip propagation delays and element responses; applied as is, the algorithm would mistake that internal delay for distance, the 3D estimate would drift, and the energy beam would miss the device."
+                  }
+                },
+                {
+                  k: { zh: "最佳感測時間會算錯", en: "Wrong sensing-time budget" },
+                  v: {
+                    zh: "第 10 篇以 Cramér–Rao 下界推算要掃描多久才夠準，前提是天線的振幅與相位可以自由調整；DMA 受洛倫茲限制，振幅與相位互相綁定。沿用原本的下界會過度樂觀，分配的感測時間太短，導致定位失敗。",
+                    en: "Paper 10 uses the Cramér–Rao bound to decide how long to scan, assuming antenna amplitude and phase can be set freely. A DMA's Lorentzian constraint ties amplitude and phase together, so the original bound is too optimistic: the sensing time it allots is too short and localization fails."
+                  }
+                }
+              ]
+            },
+            {
+              label: { zh: "我提出的方向", en: "What I proposed" },
+              text: {
+                zh: "針對前兩個衝突，我提出兩個方向：一是在極短時間內輪流只開啟部分元件，讓 RF chain 每次收到不互相疊加的回波，湊出完整的天線資料，讓滑動視窗演算法能運作；二是把 DMA 微帶線的傳播矩陣與元件權重放進雷達回波模型，改寫成包含硬體影響的雙向通道。這兩個方法我都還無法證明或驗證，可行性與運算複雜度仍是未知數。",
+                en: "For the first two conflicts I proposed two directions: briefly switching on only some elements at a time, so each RF chain receives echoes that are not summed together and the full per-antenna data can be pieced together for the sliding-window algorithm; and rewriting the radar echo model as a two-way channel that includes the DMA's microstrip propagation matrix and element weights. I could not yet prove or verify either; feasibility and complexity remain open."
+              }
+            }
+          ]
+        }
+      ],
+      // 課程的 18 篇論文，依主題分組；n 是課程上的編號
+      readings: [
+        {
+          topic: { zh: "LiFi／可見光通訊", en: "LiFi / visible light communication" },
+          papers: [
+            { n: 2, title: "Fronthaul Synchronization Requirements for Distributed MIMO in LiFi Systems", by: "A. Ebmeyer et al.", venue: "IEEE WCNC", year: 2024, url: "https://doi.org/10.1109/WCNC57260.2024.10571141" },
+            { n: 4, title: "Efficient Service Differentiation and Energy Management in Hybrid WiFi/LiFi Networks", by: "A. Ihsan et al.", venue: "IEEE Trans. Green Commun. Netw.", year: 2026, url: "https://doi.org/10.1109/TGCN.2025.3624594" },
+            { n: 6, title: "Energy and Spectral Efficiency of Multi-Tier LiFi Networks", by: "A. B. Ozyurt et al.", venue: "IEEE WCNC", year: 2023, url: "https://doi.org/10.1109/WCNC55385.2023.10118728" },
+            { n: 8, title: "Coherent LiFi System with Spatial Multiplexing", by: "Y. Tan, H. Haas", venue: "IEEE Trans. Commun.", year: 2021, url: "https://doi.org/10.1109/TCOMM.2021.3074216" },
+            { n: 15, title: "Joint Position and Orientation Estimation in VCSEL-Based LiFi Networks: A Deep Learning Approach", by: "R. Ahmad et al.", venue: "IEEE GLOBECOM", year: 2023, url: "https://doi.org/10.1109/GLOBECOM54140.2023.10436886" },
+            { n: 17, title: "Enhancing the Performance of LiFi Communication with OSTBC, QAM, and OFDM: High-Capacity, Low-Complexity Transceiver Design", by: "M. G. Al-Hamiri, H. J. Abd", venue: "Results in Optics", year: 2024, url: "https://doi.org/10.1016/j.rio.2024.100675" },
+            { n: 18, title: "Spatial and Wavelength Division Joint Multiplexing System Design for MIMO-OFDM Visible Light Communications", by: "C. Chen et al.", venue: "IEEE Access", year: 2024, url: "https://doi.org/10.1109/ACCESS.2024.3439407" }
+          ]
+        },
+        {
+          topic: { zh: "近場通訊", en: "Near-field communication" },
+          papers: [
+            { n: 1, title: "Beam-Focusing for Near-Field ISAC Systems", by: "P. Sun et al.", venue: "IEEE SPAWC", year: 2024, url: "https://doi.org/10.1109/SPAWC60668.2024.10694020" },
+            { n: 3, title: "Beam Focusing for Near-Field Multiuser MIMO Communications", by: "H. Zhang et al.", venue: "IEEE Trans. Wireless Commun.", year: 2022, url: "https://doi.org/10.1109/TWC.2022.3158894" },
+            { n: 5, title: "Near-Field Integrated Sensing and Communication: Performance Analysis and Beamforming Design", by: "K. Qu et al.", venue: "IEEE Open J. Commun. Soc.", year: 2024, url: "https://doi.org/10.1109/OJCOMS.2024.3470844" },
+            { n: 7, title: "Near-Field Rainbow: Wideband Beam Training for XL-MIMO", by: "M. Cui et al.", venue: "IEEE Trans. Wireless Commun.", year: 2023, url: "https://doi.org/10.1109/TWC.2022.3222198" },
+            { n: 9, title: "Near-Field Wideband Beam Training Based on Distance-Dependent Beam Split", by: "T. Zheng et al.", venue: "IEEE Trans. Wireless Commun.", year: 2025, url: "https://doi.org/10.1109/TWC.2024.3507795" },
+            { n: 10, title: "Sensing-Assisted Near-Field Energy Beam Focusing with ELAA over Non-Stationary Channels", by: "L. Zhang et al.", venue: "arXiv", year: 2024, url: "https://arxiv.org/abs/2410.12579" },
+            { n: 11, title: "Beam Squint Assisted Joint Angle-Distance Localization for Near-Field Communications", by: "A. Zhang et al.", venue: "arXiv", year: 2025, url: "https://arxiv.org/abs/2509.14850" },
+            { n: 12, title: "Near-Field Beam Focusing for Wireless Power Transfer with Dynamic Metasurface Antennas", by: "H. Zhang et al.", venue: "IEEE Internet Things J.", year: 2025, url: "https://doi.org/10.1109/JIOT.2025.3555113" },
+            { n: 13, title: "Hybrid Near-Field and Far-Field XL-MIMO: How Many Users Can Be Supported?", by: "Y. Zhang et al.", venue: "IEEE Commun. Lett.", year: 2024, url: "https://doi.org/10.1109/LCOMM.2024.3443529" },
+            { n: 14, title: "AN-Aided Secure Beamforming for ELAA-SWIPT in Mixed Near- and Far-Field", by: "Y. Yi et al.", venue: "arXiv", year: 2025, url: "https://arxiv.org/abs/2509.00331" }
+          ]
+        },
+        {
+          topic: { zh: "其他：深度學習通道估計", en: "Other: deep-learning channel estimation" },
+          papers: [
+            { n: 16, title: "Performance Enhancement of Massive MIMO Using Deep Learning-Based Channel Estimation", by: "H. M. N. Helmy et al.", venue: "IOP Conf. Ser.: Mater. Sci. Eng.", year: 2021, url: "https://doi.org/10.1088/1757-899X/1051/1/012029" }
+          ]
+        }
+      ]
     }
   ],
 

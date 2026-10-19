@@ -41,6 +41,13 @@
     details: { zh: "完整介紹", en: "Full write-up" },
     data: { zh: "實驗數據", en: "Results" },
     fresh: { zh: "備審未收錄", en: "New here" },
+    related: { zh: "相關", en: "Related" },
+    plan: { zh: "進度規劃", en: "Timeline" },
+    task: { zh: "工作項目", en: "Task" },
+    active: { zh: "進行", en: "active" },
+    readings: { zh: "課程論文清單", en: "Course reading list" },
+    refs: { zh: "參考文獻", en: "References" },
+    nth: { zh: "第 {n} 篇", en: "Paper {n}" },
     back: { zh: "全部項目", en: "All work" },
     prev: { zh: "上一個", en: "Previous" },
     next: { zh: "下一個", en: "Next" },
@@ -167,13 +174,19 @@
     for (var i = 0; i < all.length; i++) {
       var d = all[i].d;
       if (d.id === id) return all[i];
-      if ((d.parts || []).some(function (p) { return p.id === id; })) return { kind: all[i].kind, d: d, part: id };
+      if (shownParts(d).some(function (p) { return p.id === id; })) return { kind: all[i].kind, d: d, part: id };
     }
     return null;
   }
   function current() { return find(decodeURIComponent(window.location.hash.slice(1))); }
+  // hidden: true 的作業或報告保留在資料裡，但不顯示（卡片、目錄、詳細頁與論文清單的標籤都會略過，網址也打不開）
+  function shownParts(d) { return (d.parts || []).filter(function (p) { return !p.hidden; }); }
   function home(it) { return { project: "projects", research: "research", course: "coursework" }[it.kind]; }
-  function tag(d) { return d.fresh ? '<span class="tag">' + esc(t(UI.fresh)) + "</span>" : ""; }
+  // status 是研究項目的狀態（例如「尚未驗證」），和「備審未收錄」一樣顯示成標籤
+  function tag(d) {
+    return (d.status ? '<span class="tag">' + esc(t(d.status)) + "</span>" : "") +
+      (d.fresh ? '<span class="tag">' + esc(t(UI.fresh)) + "</span>" : "");
+  }
   function keyFig(k) {
     return '<p class="c-key"><span class="v">' + esc(t(k.value)) + '</span><span class="l">' + esc(t(k.label)) + "</span></p>";
   }
@@ -207,7 +220,7 @@
 
   // kind：project（專題）、research（有詳細頁的研究）、course（課程實驗）
   function card(it) {
-    var d = it.d, kind = it.kind, isCourse = kind === "course", parts = d.parts || [];
+    var d = it.d, kind = it.kind, isCourse = kind === "course", parts = shownParts(d);
     var key = isCourse ? (d.numbers || [])[0] : d.key;
     var reports = parts.filter(function (p) { return p.report; }).length;
     var hints = kind === "project" ? [UI.details, d.demo && UI.demo, d.repo && UI.code]
@@ -218,7 +231,7 @@
     var detailHtml = parts.length
       ? '<ul class="c-parts">' + parts.map(function (p) { return "<li><span>" + esc(t(p.label)) + "</span>" + esc(t(p.title)) + "</li>"; }).join("") + "</ul>"
       : key ? keyFig(key) : d.tech ? '<p class="c-key"><span class="l">' + techText(d) + "</span></p>" : "";
-    return '<a class="card' + (parts.length ? " card-wide" : "") + '" href="#' + esc(d.id) + '">' + (isCourse ? "" : cover(d)) + '<div class="c-body">' +
+    return '<a class="card' + (isCourse && parts.length ? " card-wide" : "") + '" href="#' + esc(d.id) + '">' + (isCourse ? "" : cover(d)) + '<div class="c-body">' +
       '<p class="c-top"><span>' + esc(t(isCourse ? d.course : d.context)) + "</span>" + tag(d) + "</p>" +
       "<h3>" + esc(t(d.title)) + "</h3>" +
       '<p class="c-sum">' + esc(t(summary)) + "</p>" + detailHtml +
@@ -249,11 +262,89 @@
   }
 
   // 文字可以是字串或陣列（陣列的每一項是一段）
-  function block(label, v) {
+  function paras(v) {
     var s = t(v);
-    var paras = (Array.isArray(s) ? s : [s]).filter(Boolean);
-    return paras.length ? '<section class="d-block"><h2>' + esc(t(label)) + "</h2>" +
-      paras.map(function (p) { return "<p>" + x(p) + "</p>"; }).join("") + "</section>" : "";
+    return (Array.isArray(s) ? s : [s]).filter(Boolean).map(function (p) { return "<p>" + x(p) + "</p>"; }).join("");
+  }
+  function block(label, v) {
+    var ps = paras(v);
+    return ps ? '<section class="d-block"><h2>' + esc(t(label)) + "</h2>" + ps + "</section>" : "";
+  }
+  // sections: [{ label, text, rows, stack, list, after }]，標題自訂的段落（研究計畫、論文研讀用）；after 是列表之後的段落
+  function sections(ss) {
+    return (ss || []).map(function (s) {
+      return '<section class="d-block"><h2>' + esc(t(s.label)) + "</h2>" + paras(s.text) +
+        (s.rows ? rowList(s.rows, s.stack) : "") + (s.list ? list(arr(s.list)) : "") + paras(s.after) + "</section>";
+    }).join("");
+  }
+  // rows: [{ k, v }]，左邊是短標籤（例如 RQ1）；stack: true 時標籤自成一行
+  function rowList(rs, stack) {
+    return '<ul class="d-rows' + (stack ? " stack" : "") + '">' + rs.map(function (r) {
+      return '<li><span class="k">' + esc(t(r.k)) + '</span><span class="v">' + x(r.v) + "</span></li>";
+    }).join("") + "</ul>";
+  }
+
+  // ---------- 詳細頁下方的全寬區塊：進度表、論文清單、參考文獻 ----------
+  function wide(label, html, count) {
+    return '<section class="d-wide"><h2>' + esc(t(label)) + (count ? '<span class="count">' + count + "</span>" : "") + "</h2>" + html + "</section>";
+  }
+  // plan: { cols: [學期], rows: [{ task, span: [開始, 結束] }] }，span 是 cols 的索引（含頭尾）
+  function plan(P) {
+    if (!P) return "";
+    var head = '<tr><th scope="col">' + esc(t(UI.task)) + "</th>" +
+      P.cols.map(function (c) { return '<th scope="col">' + esc(t(c)) + "</th>"; }).join("") + "</tr>";
+    var body = P.rows.map(function (r) {
+      return '<tr><th scope="row">' + esc(t(r.task)) + "</th>" + P.cols.map(function (c, i) {
+        return i >= r.span[0] && i <= r.span[1] ? '<td class="on"><span class="sr">' + esc(t(UI.active)) + "</span></td>" : "<td></td>";
+      }).join("") + "</tr>";
+    }).join("");
+    return wide(UI.plan, '<div class="plan-wrap"><table class="plan"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div>");
+  }
+  // 論文：{ n, title, by, venue, year, url }
+  function paperItem(p, n, extra) {
+    var title = p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(t(p.title)) + "</a>" : esc(t(p.title));
+    return '<li><span class="n">' + esc(n) + "</span><div>" + title + (extra || "") +
+      '<span class="src">' + esc([p.by, t(p.venue), p.year].filter(Boolean).join(" · ")) + "</span></div></li>";
+  }
+  function paperByN(d, n) {
+    var hit = null;
+    (d.readings || []).forEach(function (g) { g.papers.forEach(function (p) { if (p.n === n) hit = p; }); });
+    return hit;
+  }
+  // readings: [{ topic, papers }]，依主題分組；某份報告用到的論文旁邊加上連到該份報告的標籤
+  function readings(d) {
+    var groups = d.readings || [], total = 0;
+    if (!groups.length) return "";
+    var html = groups.map(function (g) {
+      total += g.papers.length;
+      return '<div class="papers-group"><h3>' + esc(t(g.topic)) + '<span class="count">' + g.papers.length + '</span></h3><ol class="papers">' +
+        g.papers.map(function (p) {
+          var used = shownParts(d).filter(function (pt) { return (pt.papers || []).indexOf(p.n) !== -1; });
+          return paperItem(p, p.n, used.map(function (pt) {
+            return ' <a class="tag" href="#' + esc(pt.id) + '">' + esc(t(pt.label)) + "</a>";
+          }).join(""));
+        }).join("") + "</ol></div>";
+    }).join("");
+    return wide(UI.readings, html, total);
+  }
+  function refs(d) {
+    return (d.refs || []).length
+      ? wide(UI.refs, '<ol class="papers refs">' + d.refs.map(function (p, i) { return paperItem(p, "[" + (i + 1) + "]"); }).join("") + "</ol>")
+      : "";
+  }
+  // 一份報告引用的論文（papers 是 readings 裡的編號）
+  function cites(d, p) {
+    var ps = (p.papers || []).map(function (n) { return [n, paperByN(d, n)]; }).filter(function (a) { return a[1]; });
+    return ps.length ? '<ul class="papers d-cite">' + ps.map(function (a) {
+      return paperItem(a[1], t(UI.nth).replace("{n}", a[0]));
+    }).join("") + "</ul>" : "";
+  }
+  // related: [項目 id]，連到網站上的其他詳細頁
+  function related(ids) {
+    var its = (ids || []).map(find).filter(Boolean);
+    return its.length ? "<ul>" + its.map(function (it) {
+      return '<li><a href="#' + esc(it.d.id) + '">' + esc(t(it.d.title)) + "</a></li>";
+    }).join("") + "</ul>" : "";
   }
 
   // ---------- 詳細頁的圖片與影片 ----------
@@ -279,7 +370,7 @@
   function gallery(d) {
     var ms = d.media || [];
     if (!ms.length) return "";
-    var label = ms.some(isVideo) ? UI.figuresVideo : UI.figures;
+    var label = d.mediaLabel || (ms.some(isVideo) ? UI.figuresVideo : UI.figures);
     return '<section class="gallery"><h2>' + esc(t(label)) + '</h2><div class="figs">' +
       ms.map(function (m) { return fig(m, t(d.title)); }).join("") + "</div></section>";
   }
@@ -308,37 +399,44 @@
   function linkList(os) {
     return (os || []).length ? "<ul>" + os.map(function (o) { return "<li>" + labeled(o) + "</li>"; }).join("") + "</ul>" : "";
   }
-  // 卡片裡的一份作業：問題、做法、發現，右側放數字與報告
-  function coursePart(p) {
+  // 卡片裡的一份作業或報告：引用的論文、問題、內容（做法、發現或自訂段落），右側放數字與報告，下方放圖片
+  function part(p, d) {
     return '<section class="d-part" id="part-' + esc(p.id) + '">' +
       '<p class="d-part-label">' + esc(t(p.label)) + "</p>" +
-      '<h2 class="d-part-title">' + esc(t(p.title)) + "</h2>" +
-      '<p class="d-part-q">' + esc(t(p.question)) + "</p>" +
-      dBody(block(UI.approach, p.approach) + block(UI.finding, p.finding), nums(p.numbers), reportBtn(p.report)) + "</section>";
+      '<h2 class="d-part-title">' + esc(t(p.title)) + "</h2>" + cites(d, p) +
+      (p.question ? '<p class="d-part-q">' + esc(t(p.question)) + "</p>" : "") +
+      dBody(block(UI.approach, p.approach) + block(UI.finding, p.finding) + sections(p.sections), nums(p.numbers), reportBtn(p.report)) +
+      gallery(p) + "</section>";
+  }
+  function toc(parts) {
+    return '<nav class="d-toc">' + parts.map(function (p) {
+      return '<a href="#' + esc(p.id) + '"><span>' + esc(t(p.label)) + "</span>" + esc(t(p.title)) + "</a>";
+    }).join("") + "</nav>";
   }
 
   function detail(it) {
     var d = it.d, all = items(), i = all.map(function (a) { return a.d.id; }).indexOf(d.id);
     var context, meta, lede, body;
     if (it.kind === "project" || it.kind === "research") {
-      var A = d.academic || {};
+      var A = d.academic || {}, parts = shownParts(d);
       context = t(d.context) + (d.badge ? comma() + t(d.badge) : "");
       meta = [t(d.period), t(d.team)];
-      lede = t(d.oneLiner || d.body);
-      body = dBody(
-        block(UI.motivation, A.motivation) + block(UI.method, A.method) + block(UI.result, A.result) + block(UI.challenge, A.challenge),
+      lede = t(d.lede || d.oneLiner || d.body);
+      body = (parts.length > 1 ? toc(parts) : "") + dBody(
+        block(UI.motivation, A.motivation) + block(UI.method, A.method) + block(UI.result, A.result) + block(UI.challenge, A.challenge) +
+          sections(d.sections),
         heroMedia(d),
-        '<dl class="facts">' + row(UI.role, list(arr(d.role))) + row(UI.notes, linkList(d.notes)) +
+        '<dl class="facts">' + (d.facts || []).map(function (f) { return row(f.k, x(f.v)); }).join("") +
+          row(UI.role, list(arr(d.role))) + row(UI.notes, linkList(d.notes)) +
           row(UI.tech, d.tech ? '<span class="p-tech">' + techText(d) + "</span>" : "") +
           row(UI.demo, ext(d.demo)) + row(UI.blog, labeled(d.blog)) + row(UI.tutorial, labeled(d.tutorial)) +
-          row(UI.code, ext(d.repo)) + "</dl>") + gallery(d);
+          row(UI.related, related(d.related)) + row(UI.code, ext(d.repo)) + "</dl>") +
+        plan(d.plan) + parts.map(function (p) { return part(p, d); }).join("") + readings(d) + refs(d) + gallery(d);
     } else if (d.parts) {
       context = t(d.course);
       meta = [t(d.period)];
       lede = t(d.summary);
-      body = '<nav class="d-toc">' + d.parts.map(function (p) {
-        return '<a href="#' + esc(p.id) + '"><span>' + esc(t(p.label)) + "</span>" + esc(t(p.title)) + "</a>";
-      }).join("") + "</nav>" + d.parts.map(coursePart).join("");
+      body = toc(shownParts(d)) + shownParts(d).map(function (p) { return part(p, d); }).join("");
     } else {
       context = t(d.course);
       meta = [t(d.period)];
@@ -348,9 +446,10 @@
     meta = meta.filter(Boolean).join(" · ");
     return '<article class="detail">' +
       '<p class="d-context"><span>' + esc(context) + "</span>" + tag(d) + "</p>" +
-      '<h1 tabindex="-1">' + esc(t(d.title)) + "</h1>" +
+      '<h1 tabindex="-1">' + esc(t(d.fullTitle || d.title)) + "</h1>" +
       (meta ? '<p class="d-meta">' + esc(meta) + "</p>" : "") +
-      '<p class="d-lede">' + esc(lede) + "</p>" + body +
+      '<p class="d-lede">' + esc(lede) + "</p>" +
+      (d.note ? '<p class="d-note">' + x(d.note) + "</p>" : "") + body +
       '<nav class="pager" aria-label="' + esc(t(UI.prev)) + " / " + esc(t(UI.next)) + '">' +
       pagerLink(all[i - 1], "prev", UI.prev) + pagerLink(all[i + 1], "next", UI.next) + "</nav></article>";
   }
